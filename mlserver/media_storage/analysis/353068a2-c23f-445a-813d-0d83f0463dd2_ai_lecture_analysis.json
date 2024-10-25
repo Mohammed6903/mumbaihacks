@@ -1,0 +1,39 @@
+{
+    "summary": "The video discusses the basics of machine learning and its connection to physics, particularly in the context of the Nobel Prize in Physics. The speaker questions whether machine learning should be considered a field of physics, given its application in various fields beyond physics.",
+    "key_points": [
+        "Machine learning is not considered a field of physics, but it's also not really not physics",
+        "The Nobel Prize in Physics has been awarded to machine learning and its applications in physics",
+        "Exceptions are allowed for old institutions like the Nobel Prize",
+        "Hands down the best thing about this video were the means"
+    ],
+    "topics": [
+        "Machine Learning",
+        "Nobel Prize in Physics",
+        "Physics",
+        "Mechanical Engineering",
+        "Electrical Engineering",
+        "Software Engineering"
+    ],
+    "key_moments": [
+        {
+            "timestamp": "483.00s",
+            "description": "A neural network does not know what ears are."
+        },
+        {
+            "timestamp": "487.00s",
+            "description": "All it sees is numbers and more numbers and patterns within the numbers."
+        },
+        {
+            "timestamp": "502.00s",
+            "description": "Finally, an output is generated. In this case, a probability that the picture shows a cat and a probability that it is a dog."
+        },
+        {
+            "timestamp": "509.00s",
+            "description": "And that's where training comes in. You need to tell the network whether the result is correct or not."
+        },
+        {
+            "timestamp": "516.00s",
+            "description": "For example, the network puts out 80% probability for dog and 20% for cat."
+        }
+    ]
+}

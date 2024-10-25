@@ -1,0 +1,107 @@
+[0.00s -> 10.00s] In this video, I will explain the very basics of artificial neural networks for people who have no idea what they are and how they work.
+[10.00s -> 12.00s] Like at all.
+[12.00s -> 25.00s] The 2024 Nobel Prize in Physics was awarded to John Hopfield and Jeffrey Hinton for their contributions to artificial neural networks, enabling machine learning and the recent breakthroughs in AI.
+[25.00s -> 27.00s] Wait what?
+[28.00s -> 35.00s] Well, not gonna lie. Like most observers, I was very surprised by this choice.
+[35.00s -> 41.00s] Not because I feel it's undisurbing, but because it's categorized as physics.
+[42.00s -> 43.00s] What's going on?
+[43.00s -> 46.00s] I'm not a musician, I'm a king of physics.
+[46.00s -> 48.00s] Physics, mother fucker!
+[71.00s -> 75.00s] What I'm going to do here is go into a lot of details or even math.
+[75.00s -> 83.00s] Because this is more of a, I don't know anything about machine learning, please explain to me in SpongeBob term situation.
+[83.00s -> 85.00s] First, neural networks.
+[85.00s -> 90.00s] Neural networks are based on how biological neurons or nerve cells work in our brain.
+[90.00s -> 97.00s] These cells take in several input signals, process them, and generate an output signal or signals.
+[97.00s -> 102.00s] Our brain is made up of a complex network of those neurons.
+[102.00s -> 108.00s] And artificial neural networks are just computer programs modeled on this very structure.
+[108.00s -> 112.00s] To be clear, they are not hardware, they do not exist materially.
+[112.00s -> 117.00s] They are just a diagram describing the structure of a computation.
+[117.00s -> 123.00s] I can draw an artificial neural network on a piece of paper and do all the calculations by hand.
+[123.00s -> 127.00s] That is the exact same thing that happens inside the computer.
+[127.00s -> 131.00s] Or slower of course, and with more errors.
+[131.00s -> 133.00s] But that's the first thing.
+[133.00s -> 139.00s] Artificial neural networks are just computer programs, or rather a structure describing a program.
+[139.00s -> 148.00s] They can be visualized by a graph containing edges that carry inputs and or outputs and notes where the computations are performed.
+[148.00s -> 153.00s] Typically, notes receive many inputs from all connected nodes.
+[153.00s -> 160.00s] Computing output and send this to all connected nodes again, like a biological neuron.
+[160.00s -> 167.00s] A simple example would be that at a node, all incoming inputs are just added up.
+[167.00s -> 176.00s] Additionally, edges are weighted, meaning they will influence the computation at a node more or less depending on their weight.
+[176.00s -> 183.00s] For example, all inputs at a node might at first be multiplied by their weight and then added up.
+[183.00s -> 187.00s] Notice that all the computations performed here are very basic.
+[187.00s -> 190.00s] It's just addition and multiplication.
+[190.00s -> 195.00s] And even with just a small number of nodes, you can have a gigantic number of edges.
+[195.00s -> 201.00s] And this is where the great complexity and also the power of neural networks come from.
+[201.00s -> 209.00s] Depending on a network, the number of edges can scale exponentially or even super exponentially with the number of nodes.
+[209.00s -> 214.00s] You can even see that by the interesting optical patterns that such networks create.
+[214.00s -> 219.00s] You can literally tell the complexity just by looking at them.
+[219.00s -> 225.00s] But basically, a neural network is just a very complex, convoluted function.
+[225.00s -> 232.00s] You put some numbers in at one end, some computations are performed and then you get some numbers out.
+[243.00s -> 253.00s] A hotfield network consists of nodes that can only be in one of two states and are connected to all other nodes by weighted edges that go in both directions symmetrically.
+[253.00s -> 257.00s] In each computational step, just a single node is chosen.
+[257.00s -> 264.00s] It takes all inputs from connected nodes together with the weights attached and computes whether it should be flipped or not.
+[264.00s -> 267.00s] Then another node is chosen, et cetera, et cetera.
+[267.00s -> 280.00s] A hotfield network can be used to first store patterns and then when it is given another pattern as input, it can retrace to which stored pattern this is the most similar to.
+[280.00s -> 285.00s] So basically, autocorrect and autocomplete for patterns.
+[285.00s -> 295.00s] So for example, you could encode the pixels of an image as a pattern and then reconstruct this original pattern from inputs that are similar.
+[295.00s -> 300.00s] The way this is done is based on an idea from physics, minimizing energy.
+[300.00s -> 305.00s] You will have noticed that with gravity, things don't move around randomly.
+[305.00s -> 310.00s] On their own, balls don't ever roll uphill, just down here.
+[310.00s -> 312.00s] How does a ball know where to roll?
+[312.00s -> 315.00s] It does not have to try out all possible paths.
+[315.00s -> 320.00s] Gravity will always make it roll the path most directly down here.
+[320.00s -> 323.00s] This way, energy is minimized.
+[323.00s -> 326.00s] The same principle is applied to the hotfield network.
+[326.00s -> 335.00s] The stored patterns are set as states of lowest energy, local minima, which is achieved by fixing the weights of all edges.
+[335.00s -> 345.00s] Then, during each step of computation, the energy of the network pattern is evaluated and is changed such that the energies are always minimized.
+[345.00s -> 349.00s] This will iterate the pattern to the closest local minimum.
+[349.00s -> 351.00s] So the closest stored pattern.
+[351.00s -> 362.00s] Note that this is a very basic network with a lot of limitations, but it was one of the first demonstrations of what could be achieved with neural networks.
+[374.00s -> 379.00s] Let's look at a more capable neural network, classical machine learning.
+[380.00s -> 391.00s] For example, let's imagine we have a neural network where you enter an image of an animal as input and it tries to figure out whether this is an image of a cat or dog.
+[391.00s -> 394.00s] You start with a network like this.
+[394.00s -> 402.00s] Note that there is no clear rule how large a network like this has to be, how many nodes and how many layers it needs, etc.
+[402.00s -> 406.00s] All of those things come down to trial and error or experience.
+[407.00s -> 412.00s] Also, the initial weights can be either random or based on experience as well.
+[412.00s -> 416.00s] You have a number of nodes that take input from outside the program.
+[416.00s -> 419.00s] In this case, the brightness of pixels of an image.
+[419.00s -> 423.00s] So, at each input node, you now have a number.
+[423.00s -> 431.00s] These numbers are then sent to the next layer of nodes, which are called hidden nodes, because they are calculating just an intermediate step of the program.
+[432.00s -> 442.00s] Again, each node gets a lot of numbers as input and each number will be multiplied by its weight and all of this will then be summed up to get a new number.
+[442.00s -> 451.00s] Okay, so the numbers of the input layer were the brightness of pixels, but what are the numbers calculated by the hidden layers?
+[451.00s -> 457.00s] And that's kind of the thing, and that's why we often talk about AI being a black box.
+[457.00s -> 464.00s] Because these numbers are just representations for some characteristic or pattern within the input.
+[464.00s -> 470.00s] It's nothing a human could do anything with. In fact, to us, it looks like random noise.
+[470.00s -> 473.00s] We as humans would use completely different criteria.
+[473.00s -> 478.00s] For example, we would look at the size of the head or the shape of the ears.
+[478.00s -> 483.00s] We would use all those to figure out whether an animal were a cat or dog.
+[483.00s -> 487.00s] A neural network does not know what ears are.
+[487.00s -> 492.00s] All it sees is numbers and more numbers and patterns within the numbers.
+[492.00s -> 502.00s] Finally, an output is generated. In this case, a probability that the picture shows a cat and a probability that it is a dog.
+[502.00s -> 509.00s] And that's where training comes in. You need to tell the network whether the result is correct or not.
+[509.00s -> 516.00s] For example, the network puts out 80% probability for dog and 20% for cat.
+[516.00s -> 519.00s] And the image actually shows a dog.
+[519.00s -> 529.00s] Now, the weights of the network that led to the correct dog output will be amplified, while those weights that led to the wrong cat output will be weakened.
+[529.00s -> 536.00s] And once a network has been through millions or even billions of those learning cycles, it will be trained.
+[536.00s -> 542.00s] And it will be pretty good at figuring out whether an image shows a cat or dog.
+[542.00s -> 548.00s] Or recognize handwriting or recognize speech or whatever it was trained to do.
+[548.00s -> 554.00s] And again, the network I've shown is somewhat simplified and even outdated.
+[554.00s -> 561.00s] But it's very good at getting across the basic ideas of machine learning, and that's why I used it.
+[561.00s -> 576.00s] So physics Nobel for machine learning.
+[577.00s -> 585.00s] The justification was that a lot of the basic ideas stem from physical models or physical concepts.
+[585.00s -> 590.00s] And also that the machine learning methods were heavily applied in physics.
+[590.00s -> 598.00s] For example, to analyze output from particle colliders or to construct images of black holes, etc.
+[598.00s -> 605.00s] And all of this is true, but does that mean that artificial neural networks and machine learning is physics?
+[605.00s -> 614.00s] Well, it's not really physics, but it's also not really not physics.
+[614.00s -> 622.00s] And there have been Nobel prices in physics before that were closer to mechanical engineering or electrical engineering.
+[622.00s -> 625.00s] And now we also have software engineering.
+[625.00s -> 633.00s] I guess what it all comes down to, at least for me, is that it's fine to make this kind of exceptions.
+[633.00s -> 642.00s] But only as an exception. But if this kind of stuff became the norm, why call it Nobel Prize in physics anymore?
+[642.00s -> 650.00s] I get that. Institutions, especially old institutions, from time to time have to show that they're still up to date and they're still relevant.
+[650.00s -> 660.00s] But you know, you also have to do what you're supposed to do. We don't need a second touring award. We already have one.
+[660.00s -> 668.00s] Anyway, like I said in the intro, this video is focused on the very broad ideas of machine learning.
+[668.00s -> 676.00s] If you're interested in much more detailed treatments, including even math, you can check out those links.
+[676.00s -> 682.00s] I think these are really great videos.
+[682.00s -> 689.00s] As a final thought, hands down the best thing about this was the means.
+[689.00s -> 692.00s] So I'll let you enjoy a couple of those as an outro.
+[692.00s -> 697.00s] See you again next year, hopefully with a little bit more physics.
+[749.00s -> 752.00s] You

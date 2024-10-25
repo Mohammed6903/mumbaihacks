@@ -1,0 +1,767 @@
+[0.00s -> 12.96s] Hello everyone, welcome to CS229. Today we're going to talk about deep learning and
+[12.96s -> 19.20s] neural networks. We're going to have two lectures on that, one today and a little bit more
+[19.20s -> 26.28s] of it on Monday. Don't hesitate to ask questions during the lecture, so stop me if you don't
+[26.28s -> 31.08s] understand something and we'll try to build the intuition around neural network together. We
+[31.08s -> 35.72s] will actually start with an algorithm that you guys have seen previously called logistic regression.
+[35.72s -> 42.64s] Everybody remembers logistic regression? Okay, remember it's a classification algorithm. We're
+[42.64s -> 47.68s] going to do that, explain how logistic regression can be interpreted as a neural network,
+[47.68s -> 54.96s] a specific case of a neural network, and then we will go to neural networks. Sounds good? So the
+[54.96s -> 69.16s] quick and strong deep learning. So deep learning is a set of techniques that is, let's say, a subset
+[69.16s -> 73.36s] of machine learning and it's one of the growing techniques that have been used in the industry,
+[73.36s -> 78.36s] specifically for problems in computer vision, natural language processing and speech recognition.
+[78.36s -> 85.28s] So you guys have a lot of different tools and plugins on your smartphones that uses this type
+[85.28s -> 93.16s] of algorithm. The reason it came to work very well is primarily the new computational methods.
+[93.16s -> 101.56s] So one thing we're going to see today is that deep learning is really, really computationally
+[101.56s -> 109.08s] expensive and people had to find techniques in order to parallelize the code and use GPUs
+[109.08s -> 116.32s] specifically in order to graph the processing unit in order to be able to compute the computations
+[116.32s -> 126.72s] in deep learning. The second part is the data available has been growing after the internet
+[126.72s -> 132.24s] bubble, the digitization of the work. So now people have access to large amounts of data and
+[132.24s -> 137.28s] this type of algorithm has the specificity of being able to learn a lot when there's a lot of data.
+[137.28s -> 142.48s] So these models are very flexible and the more you give them data, the more they would be able to
+[142.48s -> 150.96s] understand the salient feature of the data. And finally algorithms. So people have come up with
+[150.96s -> 158.16s] new techniques in order to use the data, use the computation power and build models. So we're going
+[158.16s -> 162.56s] to touch a little bit on all of that. But let's go with logistic regression first.
+[169.28s -> 178.96s] Can you guys see in the back? Yeah, okay, perfect. So you remember what logistic regression is?
+[178.96s -> 189.12s] We're going to fix a goal for us that is a classification goal. So let's try to find cats in images.
+[189.12s -> 200.08s] So find cats in images. Meaning binary classification. If there is a cat in the image,
+[200.08s -> 210.64s] we want to output a number that is close to one, presence of a cat. And if there is no cat in the image,
+[210.64s -> 221.52s] we want to output zero. Let's say for now we're constrained to the fact that there is maximum one cat per
+[221.52s -> 227.84s] image. There's no more. If you had to draw the logistic regression model, that's what you would do. You
+[227.84s -> 241.20s] take a cat. So this is an image of a cat. Very bad at that. In computer science, you know that
+[241.20s -> 248.88s] images can be represented as 3D matrices. So if I tell you that this is a color image of size 64
+[249.68s -> 255.12s] by 64, how many numbers do I have to represent those pixels?
+[260.96s -> 270.96s] Yeah, I heard it. 64 by 64 by 3. 3 for the RGB channel. Red, green, blue. Every pixel in an image
+[270.96s -> 276.40s] can be represented by three numbers. One representing the red filter, the green filter, and the blue
+[276.40s -> 286.00s] filter. So actually, this image is of size 64 times 64 times 3. Does that make sense? So the first
+[286.00s -> 290.64s] thing we will do in order to use logistic regression to find if there is a cat on this image, we're going to
+[290.64s -> 299.52s] flatten this into a vector. So I'm going to take all the numbers in this matrix and flatten them in a
+[299.52s -> 306.72s] vector. Just an image to vector operation. Nothing more. And now I can use my logistic regression
+[306.72s -> 315.60s] because I have a vector input. So I'm going to take all of these and push them in an operation
+[316.24s -> 327.20s] that we call the logistic operation, which has one part that is wx plus b, where x is going to be the
+[327.20s -> 337.04s] image. So wx plus b. And the second part is going to be the sigmoid. Everybody's familiar with the
+[337.04s -> 342.00s] sigmoid function? Function that takes a number between minus infinity and plus infinity, maps it
+[342.00s -> 346.24s] between zero and one. It's very convenient for classification problems. And these were going to
+[346.24s -> 352.16s] call it y hat, which is sigmoid of what you've seen in class previously. I think it's tainted
+[352.16s -> 356.56s] transpose x. But here we will just separate the notation into w and b.
+[364.48s -> 369.60s] So can someone tell me what's the shape of w? To matrix w?
+[369.60s -> 372.56s] To vector matrix.
+[382.40s -> 396.24s] What? Yes, 64 by 64 by 3. So you know that this guy here is a vector of 64 by 64 by 3,
+[396.64s -> 408.24s] a column vector. So the shape of x is going to be 64 by 64 by 3 times 1. This is the shape. And this,
+[408.24s -> 422.72s] I think it's 12,288. And this, indeed, because we want y hat to be 1 by 1, this w has to be 1
+[423.68s -> 430.64s] by 12,288. That makes sense? So we have a row vector as our parameter.
+[432.64s -> 437.04s] We're just changing the notation of the logistic regression that you guys have seen.
+[437.04s -> 442.48s] And so once we have this model, we need to train it, as you know. And the process of training
+[442.48s -> 451.28s] is that first we will initialize our parameters. These are what we call parameters.
+[451.44s -> 461.84s] We will use the specific vocabulary of weights and bias. I believe you guys have heard this vocabulary
+[461.84s -> 470.48s] before, weights and biases. So we're going to find the right w and the right b in order to be able
+[471.12s -> 478.16s] to use this model properly. Once we initialize them, what we will do is that we will optimize them,
+[478.16s -> 490.08s] find the optimal w and b. And after we found the optimal w and b, we will use them to predict.
+[501.68s -> 506.08s] Does this process make sense? It's training process. And I think the important part is to
+[506.08s -> 512.56s] understand what this is. Find the optimal w and b means defining your loss function,
+[512.56s -> 519.12s] which is the objective. And in machine learning, you often have this specific problem where you have
+[519.12s -> 524.16s] a function that you know you want to find, the network function, but you don't know the values
+[524.16s -> 528.24s] of its parameters. And in order to find them, you're going to use a proxy that is going to be your
+[528.24s -> 532.64s] loss function. If you manage to minimize the loss function, you will find the right parameters.
+[533.12s -> 548.88s] So you define a loss function that is the logistic loss, y log of y hat plus 1 minus y log of 1 minus y hat.
+[551.84s -> 554.08s] You guys have seen this one. You remember where it comes from?
+[556.00s -> 560.64s] It comes from a maximum likelihood estimation starting from a probabilistic model.
+[563.04s -> 568.00s] And so the idea is how can I minimize this function? Minimize because I've put a minus sign here.
+[569.52s -> 575.84s] I want to find w and b that minimize this function. And I'm going to use a gradient descent algorithm,
+[577.04s -> 583.60s] which means I'm going to iteratively compute the derivative of the loss with respect to my parameters.
+[583.76s -> 595.04s] And at every step, I will update them. To make this loss function go a little down at every
+[595.04s -> 599.68s] derivative step. So in terms of implementation, this is a for loop. You will loop over a certain
+[599.68s -> 604.40s] number of iteration. And at every point, you will compute the derivative of your loss with respect to
+[604.40s -> 612.08s] your parameters. Everybody remembers how to compute this number? Take the derivative here, you use
+[612.08s -> 618.16s] the fact that the sigmoid function has a derivative that is sigmoid times 1 minus sigmoid.
+[618.88s -> 622.88s] And you will compute the result. We're going to do some derivative later today,
+[623.68s -> 630.72s] but just to set up the problem here. So the few things that I want to touch on here,
+[631.44s -> 637.20s] is first how many parameters does this model have, this logistic regression? If you have to count them.
+[642.16s -> 653.28s] So this is the number 089, correct? So 12,288 weights and 1 bias. That makes sense?
+[654.00s -> 658.32s] So actually it's funny because you can quickly count it by just counting the number of edges on the
+[659.20s -> 667.04s] drawing plus one. Every circle has a bias, every edge has a weight. Because ultimately,
+[667.76s -> 674.32s] this operation, you can rewrite it like that, right? It means every weight has
+[675.84s -> 679.92s] every weight corresponds to an edge. So that's another way to count it. We're going to use it a
+[679.92s -> 684.72s] little further. So we're starting with not too many parameters actually. And one thing that we
+[684.72s -> 689.92s] notice is that the number of parameters of a model depends on the size of the input. We probably
+[689.92s -> 696.40s] don't want that at some point. So we're going to change it later on. So two equations that I want you to
+[696.40s -> 706.56s] remember is the first one is neuron equals linear plus activation. So this is the vocabulary we
+[706.56s -> 713.04s] will use in neural networks. We define a neuron as an operation that has two parts, one linear part
+[713.04s -> 716.40s] and one activation part. And it's exactly that. This is actually a neuron.
+[719.60s -> 725.68s] We have a linear part, wx plus b. And then we take the output of this linear part
+[725.68s -> 730.56s] and we put it in an activation that in this case is the sigmoid function. It can be other functions.
+[731.84s -> 739.36s] Okay? So this is the first equation, not too hard. The second equation that I want to set now
+[739.36s -> 754.72s] is the model equals architecture plus parameters. What does that mean? It means here we're trying to
+[754.72s -> 761.28s] train a logistic regression in order to be able to use it. We need an architecture, which is the
+[761.28s -> 769.84s] following, a one-year-own neural network and the parameters w and b. So basically when people say
+[769.84s -> 774.72s] we've shipped a model like in the industry, what they're saying is that they found the right
+[774.72s -> 779.84s] parameters with the right architecture. They have two files and these two files are predicting a
+[779.84s -> 787.60s] bunch of things. One parameter file and one architecture file. The architecture will be modified a
+[787.60s -> 793.84s] lot today. We will add neurons all over and the parameters will always be called w and b,
+[793.84s -> 798.40s] but they will become bigger and bigger. Because we have more data, we want to be able to understand it.
+[799.52s -> 805.52s] You can get that it's going to be hard to understand what a cat is. We only that many parameters.
+[805.52s -> 813.44s] We want to have more parameters. Any questions so far? So this was just to set up the problem with
+[813.44s -> 822.08s] logistic regression. Let's try to set a new goal after the first goal we have set prior to that.
+[822.64s -> 839.12s] So the second goal would be find cat lion iguana in images. So a little different than before.
+[839.12s -> 845.36s] The only thing we changed is that we want to now detect three types of animals. If there's a cat on
+[845.36s -> 849.12s] the image, I want to know there's a cat. If there's an iguana on the image, I want to know there's an iguana.
+[849.12s -> 855.04s] If there's a lion on the image, I want to know it as well. So how would you modify the network
+[855.68s -> 868.64s] that we previously had in order to take this into account? Yeah. Yeah, good idea. So put two more
+[868.64s -> 877.20s] circles, so neurons, and do the same thing. So we have our picture here with the cats. So the cat
+[877.20s -> 890.40s] is going to the right. 64x64x3, we flatten it from x1 to xn. Let's say n represents 64x64x3.
+[891.28s -> 897.76s] And what I will do is that I will use three neurons that are all computing the same thing. They're all
+[897.84s -> 910.56s] connected to all these inputs. I connect all my inputs x1 to xn to each of these neurons.
+[910.56s -> 923.36s] And I will use a specific set of notation here.
+[940.56s -> 969.36s] y2 hat equals a21 sigmoid of w21 plus x plus b21. And similarly y3 hat equals a31, which is sigmoid of w31 x plus b31.
+[971.52s -> 976.56s] So I'm introducing a few notations here, and we'll get used to it, don't worry. So just
+[976.56s -> 981.92s] just write this down, and we're going to go over it. So the square brackets here
+[983.92s -> 989.76s] represent what we will call later on a layer. If you look at this network, it looks like there is
+[989.76s -> 996.08s] one layer here. There is one layer in which neurons don't communicate with each other. We could
+[996.08s -> 1001.12s] add up to it, and we will do it later on, more neurons in other layers. We will denote with square
+[1001.12s -> 1009.28s] brackets the index of the layer. The index that is the subscript to this a is the number identifying
+[1009.28s -> 1015.68s] the neuron inside the layer. So here we have one layer, we have a1, a2, and a3 with square brackets
+[1015.68s -> 1021.92s] 1 to identify the layer. Does that make sense? And then we have our y hat that instead of being a
+[1021.92s -> 1031.52s] single number as it was before, is now a vector of size 3. So how many parameters does this network have?
+[1045.44s -> 1045.84s] How much?
+[1046.32s -> 1050.56s] How did you come up with that?
+[1052.72s -> 1057.36s] Okay, yeah, correct. So we just have three times the thing we had before, because we added two more
+[1057.36s -> 1062.96s] neurons, and they all have their own set of parameters. Look like this edge is a separate edge
+[1062.96s -> 1068.48s] is this one. So we have to replicate parameters for each of these. So w1, 1 would be the equivalent
+[1068.48s -> 1074.80s] of what we had for the cat, but we have to add two more parameter vectors and biases.
+[1076.72s -> 1082.80s] So other question, when you had to train this logistic regression, what dataset did you need?
+[1093.92s -> 1096.16s] Can someone try to describe the dataset?
+[1099.20s -> 1099.44s] Yeah.
+[1099.44s -> 1111.36s] So we need images and labels with it, labeled as cat1 or no cat0. So it's a binary classification
+[1111.36s -> 1116.88s] with images and labels. Now, what do you think should be the dataset to train this network?
+[1121.68s -> 1122.32s] Yes, go for it.
+[1129.52s -> 1139.84s] That's a good idea. So just to repeat, a label for an image that has a cat would probably be a vector
+[1141.12s -> 1148.16s] with a 1 and 2 zeros, where the 1 should represent the presence of a cat. This one should
+[1148.16s -> 1152.08s] represent the presence of a lion, and this one should represent the presence of a lion.
+[1152.72s -> 1161.28s] So let's assume I use this scheme to label my dataset. I train this network using the same
+[1161.28s -> 1167.28s] techniques here. Initialize all my weights and biases with a value, a starting value,
+[1167.28s -> 1175.04s] optimize a loss function by using gradient descent, and then use what I had equals La La to predict.
+[1178.32s -> 1181.20s] What do you think this new is going to be responsible for?
+[1182.48s -> 1190.08s] If you have to describe the responsibility of this new.
+[1193.76s -> 1195.28s] Yes, well, this one.
+[1198.80s -> 1203.44s] Yeah, lion, and this one is one. So basically, the way you, yeah, go for it?
+[1207.20s -> 1209.36s] That's a good question. We're going to talk about that now.
+[1209.92s -> 1215.44s] Multiple image content, different animals or not. So going back on what you said, because we decided
+[1215.44s -> 1220.48s] to label our dataset like that, after training, this new your own is naturally going to be there
+[1220.48s -> 1226.08s] to detect cats. If we had changed the labeling scheme, and I said that the second entry would correspond
+[1226.08s -> 1231.20s] to the cat, the presence of a cat, then after training, you will detect that this new
+[1231.20s -> 1235.76s] your own is responsible for detecting a cat. So the network is going to evolve depending on the way
+[1235.76s -> 1243.28s] you label your dataset. Now, do you think that this network can still be robust to different
+[1243.28s -> 1251.20s] animals in the same picture? So this cat now has a friend that is a lion. I have no idea how to
+[1251.20s -> 1259.52s] draw a lion, but let's say there is a lion here. And because there is a lion, I will add a one here.
+[1259.52s -> 1263.36s] Do you think this network is robust to this type of labeling?
+[1266.08s -> 1274.08s] It should be the neurons are intact into each other. That's a good answer actually.
+[1274.08s -> 1276.08s] Another answer?
+[1276.08s -> 1286.80s] You're not telling me that like, the nature of those two pictures is the pattern of the lion,
+[1286.80s -> 1291.60s] stuff like the face that they just started to pass down the lion's, but it doesn't stop.
+[1291.60s -> 1296.72s] That's a good intuition because the network, what it sees is just 1, 1, 0, and an image.
+[1297.60s -> 1303.12s] It doesn't see that this one corresponds to the cat corresponds to the first one and the lion
+[1303.12s -> 1308.64s] corresponds to the second one. So this is a property of neuron networks. It's the fact that you don't
+[1308.64s -> 1312.08s] need to tell them everything. If you have enough data, they're going to figure it out.
+[1312.72s -> 1318.56s] So because you will have also cats with iguanas, cats alone, lions with iguanas, lions alone.
+[1318.56s -> 1323.44s] Ultimately, this neuron will understand what it's looking for. And it will understand that this
+[1323.44s -> 1331.28s] one corresponds to this lion. Just needs a lot of data. So yes, it's going to be robust, and that's
+[1331.28s -> 1335.44s] the reason you mentioned. It's going to be robust to that because the three neurons aren't
+[1335.44s -> 1341.68s] communicating together. So we can totally train them independently from each other. And in fact,
+[1341.68s -> 1346.56s] the sigmoid here doesn't depend on the sigmoid here and doesn't depend on the sigmoid here.
+[1346.56s -> 1352.08s] It means we can have one, one, and one as an output. Yes, question.
+[1355.68s -> 1361.76s] You could think about it as three logistic regression. So we wouldn't call that a neuron network yet.
+[1361.76s -> 1368.88s] It's not ready yet. But it's a three neuron-run network or three logistic regression with each other.
+[1370.08s -> 1373.36s] Now, following up on that, yeah, go forward to a question.
+[1376.80s -> 1380.16s] W and B are related to what?
+[1382.96s -> 1391.04s] Oh, yeah. So, so usually you would have theta transpose x, which is sum of theta i x i.
+[1391.52s -> 1398.64s] Correct? And what I will split it is I will split it in sum of theta i x i plus theta zero
+[1399.92s -> 1405.92s] times one. I'll split it like that. Tata zero would correspond to B, and these theta i's
+[1405.92s -> 1411.84s] would correspond to W i's. Makes sense? One more question and then we move on.
+[1426.32s -> 1432.32s] Good question. That's the next thing we're going to see. So the question is a follow-up on this.
+[1432.32s -> 1439.04s] Is there cases where we have a constraint where there is only one possible outcome?
+[1439.68s -> 1444.96s] It means there is no cat in lion. There's either a cat or a lion. There's no iguana in lion. There's
+[1444.96s -> 1453.52s] either an iguana or a lion. Think about healthcare. There are many models that are made to detect
+[1455.20s -> 1459.84s] if a disease, skin disease is present on based on cell microscopic images.
+[1460.56s -> 1464.88s] Usually, there is no overlap between this and this. It means you want to classify a specific
+[1464.88s -> 1470.96s] disease among a large number of diseases. So this model would still work but would not be optimum
+[1470.96s -> 1475.84s] because it's longer to train. Maybe one disease is super, super rare, and one of the neurons is
+[1475.84s -> 1480.24s] never going to be trained. Let's say you're working in a zoo where there is only one iguana and there
+[1480.24s -> 1485.92s] are thousands of lions and thousands of cats. This guy will never train almost. You know, it would
+[1485.92s -> 1490.72s] be super hard to train this one. So you want to start with another model where you put the constraint
+[1490.72s -> 1496.40s] that, okay, there is only one disease that we want to predict. Let the model learn with all the
+[1496.40s -> 1502.96s] neurons learned together by creating interaction between them. Have you guys heard of softmax?
+[1504.72s -> 1511.76s] Yes, I see that. Let's look at softmax a little bit to get. So we set a new goal now.
+[1516.08s -> 1526.72s] Which is we add a constraint which is unique animal on an image.
+[1531.20s -> 1537.84s] So at most one animal on an image. So I'm going to modify the network a little bit.
+[1538.80s -> 1543.68s] We have our cat and there is no lion on the image. We flatten it.
+[1546.00s -> 1555.92s] And now I'm going to use the same scheme with the trinirons a1, a2, a3.
+[1556.32s -> 1578.08s] But as an output what I'm going to use is a softmax function. So let me be more precise. Let me actually introduce another notation to make it easier.
+[1579.04s -> 1588.88s] As you know the neuron is a linear part plus an activation. So we're going to introduce a notation for the linear part.
+[1589.76s -> 1594.56s] I'm going to introduce z11 to represent the linear part of the first neuron.
+[1597.28s -> 1607.44s] z112 to introduce the linear part of the second neuron. So now a neuron has two parts, one which compute z and one which compute a
+[1607.44s -> 1614.64s] equals sigma e dot z. Now I'm going to remove all the activations and make these z's.
+[1618.56s -> 1624.56s] And I'm going to use the specific formula.
+[1637.44s -> 1650.24s] So this if you recall it's exactly the softmax formula.
+[1668.24s -> 1675.84s] So now the network we have, can you guys see where it's too small?
+[1676.80s -> 1683.36s] Too small? I'm going to just write this formula bigger and then you can figure out the others I guess.
+[1683.36s -> 1696.80s] Because e of z31 divided by some from k equals 1 to 3 of e exponential of zk1.
+[1698.16s -> 1707.36s] Can you see this one? So here is the third one. If you were doing it for the first one you will add, you just change this into a 2, into a 1 and for a second one into a 2.
+[1708.32s -> 1712.96s] So why is this formula interesting and why is it not robust to this labeling scheme anymore?
+[1713.76s -> 1718.88s] It's because the sum of the outputs of this network have to sum up to 1.
+[1719.92s -> 1727.36s] You can try it if you sum the three outputs, you get the same thing in the numerator and on the denominator and you get 1.
+[1728.64s -> 1730.40s] Does that make sense?
+[1730.40s -> 1734.80s] So instead of getting a probabilistic output for each,
+[1737.36s -> 1744.56s] if each of y had 1, y had 2, y had 3, we will get a probability distribution over all the classes.
+[1745.12s -> 1753.60s] So it means we cannot get 0.7, 0.6, 0.1, telling us roughly that there is probably a cat and a lion but no iguana.
+[1753.92s -> 1761.76s] We have to sum these two ones. So it means if there is no cat and no lion, it means there is very likely an iguana.
+[1762.40s -> 1764.80s] The three probabilities are dependent on each other.
+[1764.80s -> 1778.56s] And for this one, we have to label the following way, 1, 1, 0 for a cat, 0, 1, 0 for a lion or 0, 0, 1 for an iguana.
+[1779.36s -> 1786.56s] So this is called a softmax, multi-class network.
+[1795.76s -> 1810.56s] You assume there is at least one of the three classes. Otherwise, you have to add the fourth inputs that will represent an absence of animal.
+[1811.36s -> 1816.16s] But this way, yeah, you assume there is always one of these three animals on every picture.
+[1816.88s -> 1824.88s] And how many parameters does the network have?
+[1826.64s -> 1830.48s] The same as the second one. We still have three new ones and although I didn't write it,
+[1831.20s -> 1840.72s] the z1 is equal to w1, 1, x plus b1, z2 is same, z3 is same. So there is 3n plus 3 parameters.
+[1841.68s -> 1849.84s] So one question that we didn't talk about is how do we train these parameters?
+[1855.52s -> 1859.60s] These parameters, the 3n plus 3 parameters, how do we train them?
+[1859.60s -> 1863.36s] You think this scheme will work or no? What's wrong with this scheme?
+[1863.44s -> 1870.24s] What's wrong with the last function specifically?
+[1876.32s -> 1879.12s] There's only two outcomes. So in this last function,
+[1880.24s -> 1888.72s] y is a number between 0 and 1. y hat is a probability, y is either 0 or 1. y hat is between 0 and 1.
+[1888.88s -> 1893.28s] So it cannot match this labeling. So we need to modify the last function.
+[1895.68s -> 1898.80s] So let's call it loss tree neural.
+[1901.68s -> 1916.16s] What I'm going to do is I'm going to just sum it up for the tree neural.
+[1919.12s -> 1926.96s] Does this make sense?
+[1928.24s -> 1933.52s] So I'm just doing three times this loss for each of the neurons.
+[1934.32s -> 1938.56s] So we have exactly three times this. We sum them together.
+[1939.84s -> 1945.04s] And if you train this last function, you should be able to train the tree neurons that you have.
+[1945.84s -> 1949.12s] And again, talking about scarcity of one of the classes.
+[1949.12s -> 1957.28s] If there's not many iguana, then the third term of this sum is not going to help this
+[1957.28s -> 1962.80s] neuron train towards detecting an iguana. It's going to push it to detect no iguana.
+[1966.80s -> 1968.96s] Any question on the loss function? Does this one make sense?
+[1970.48s -> 1970.80s] Yeah?
+[1975.04s -> 1988.00s] The output of this network once its train is going to be a probability distribution.
+[1988.00s -> 1992.80s] You will pick the maximum of those and you will set it to one and the others to zero as your prediction.
+[1996.80s -> 1997.68s] One more question?
+[1997.68s -> 1997.84s] Yeah?
+[2005.20s -> 2015.36s] If you use the two one, if you use this labeling scheme, like one one zero for this network,
+[2016.24s -> 2017.28s] what do you think it will happen?
+[2021.20s -> 2028.40s] It will probably not work. And the reason is this sum is equal to two, the sum of these entries,
+[2028.40s -> 2033.84s] while the sum of these entries is equal to one. So you will never be able to match the output
+[2033.92s -> 2039.44s] to the input, to the label. That makes sense. So what the network is probably going to do is it's
+[2039.44s -> 2044.08s] probably going to send this one to one half, this one to one half, and this one to zero, probably,
+[2044.08s -> 2052.40s] which is not what you want. Okay, let's talk about the loss function for this soft matter regression.
+[2052.40s -> 2067.04s] Because you know what's interesting about this loss is if I take this derivative,
+[2068.32s -> 2072.96s] the derivative of the loss tree n with respect to w21.
+[2076.32s -> 2080.24s] Do you think it's going to be harder than this derivative than this one or no?
+[2081.20s -> 2086.16s] It's going to be exactly the same, because only one of these three terms depends on w12.
+[2086.16s -> 2091.52s] It means the derivative of the two others are zero. So we're exactly at the same complexity during
+[2091.52s -> 2100.40s] the derivation. But this one, you think if you try to compute, let's say we define a loss function
+[2100.40s -> 2104.16s] that corresponds roughly to that, if you try to compute the derivative of the loss with respect to
+[2104.16s -> 2112.80s] w2, it would become much more complex. Because this number, the output here that is going to impact
+[2112.80s -> 2118.08s] the loss function directly, not only depends on the parameters of w2, it also depends on the
+[2118.08s -> 2124.56s] parameters of w1 and w3. And same for this output, this output also depends on the parameters w2.
+[2125.20s -> 2130.96s] Does it make sense? Because of this denominator. So the softmax regression needs a different
+[2130.96s -> 2137.12s] loss function and a different derivative. So the loss function we'll define is a very common one
+[2137.12s -> 2145.44s] in the learning. It's called the softmax for a centropie, cross-entropie loss.
+[2148.40s -> 2152.80s] I'm not going to into the details of where it comes from, but you can get the intuition.
+[2152.80s -> 2162.80s] YK.
+[2175.36s -> 2181.92s] So it surprisingly looks like the binary cross-entropie, the logistic loss function.
+[2183.52s -> 2191.12s] The only difference is that we will sum it up on all the classes.
+[2194.16s -> 2197.28s] Now, we will take a derivative of something that looks like that later,
+[2198.32s -> 2203.20s] but I'd say if you can try it at home on this one, it would be a good exercise as well.
+[2204.48s -> 2210.88s] So this binary cross-entropie loss is very likely to be used in classification problems that are
+[2210.88s -> 2220.40s] multi-class. Okay, so this was the first part on logistic regression types of networks.
+[2220.40s -> 2226.00s] And I think we're ready now with the notation that we introduced to jump on to neural networks.
+[2226.64s -> 2228.96s] Any question on this first part before we move on?
+[2229.12s -> 2236.88s] So one question I would have for you.
+[2236.88s -> 2244.56s] Let's say instead of trying to predict if there is a cat or no cat, we will try to predict the age of the cat,
+[2244.56s -> 2248.32s] based on the image. What would you change?
+[2251.04s -> 2255.36s] This network. Instead of predicting 1, 0, you want to predict the age of the cat.
+[2255.68s -> 2259.84s] What are the things you would change?
+[2264.32s -> 2265.52s] Yes?
+[2265.84s -> 2272.88s] In each network there are multiple names, so there is one group of people who can't predict that.
+[2273.84s -> 2281.36s] Okay, so I repeat, I basically make several output nodes where each of them corresponds to one
+[2281.36s -> 2284.48s] age of cat. So would you use this network or the third one?
+[2287.04s -> 2290.88s] Would you use the three neural neural network or the softmax regression?
+[2291.84s -> 2292.96s] The third one, why?
+[2295.52s -> 2297.84s] You have a unique age. You cannot have two ages.
+[2298.88s -> 2304.40s] So we would use the softmax one because we want a probability distribution along the age.
+[2305.20s -> 2308.48s] Okay, that makes sense. That's a good approach.
+[2309.12s -> 2313.68s] There is also another approach which is using directly a regression to predict an age.
+[2313.68s -> 2319.44s] An age can be between 0 and plus infinity, but 0 in a certain number.
+[2321.12s -> 2327.60s] So let's say you want to do a regression. How would you modify your network?
+[2330.16s -> 2335.36s] Change the sigmoid. The sigmoid puts the z between 0 and 1. We don't want this to happen.
+[2335.36s -> 2339.76s] So I'd say we will change the sigmoid into what function would you change the sigmoid?
+[2339.92s -> 2344.64s] The second one you said was?
+[2344.64s -> 2359.92s] Or to get a personal type of distribution. Okay, so let's go with linear. You mentioned linear.
+[2359.92s -> 2367.04s] We could just use a linear function for the sigmoid, but this becomes a linear regression.
+[2367.76s -> 2372.32s] The whole network becomes a linear regression. Another one that is very common in deep learning
+[2372.32s -> 2378.24s] is called the reloo function. It's a function that is almost linear, but for every input that is
+[2378.24s -> 2383.04s] negative, it's equal to 0. Because we cannot have negative age, it makes sense to use this one.
+[2384.96s -> 2392.72s] Okay, so this is called rectified linear units. Relo. It's a very common one in deep learning.
+[2393.60s -> 2398.64s] Now, what else would you change? We talked about linear regression. Do you remember the
+[2398.64s -> 2407.44s] last function you were using a linear regression? What was it? It was probably one of these two.
+[2408.08s -> 2415.36s] Why hat minus y? Just comparison between the output, label, and why hat, the prediction.
+[2415.36s -> 2421.76s] Or it was the L2 loss. Why hat minus y in L2 norm? So that's what we would use. We would
+[2421.76s -> 2427.28s] modify our loss function to fit the regression type of problem. And the reason we would use this
+[2427.28s -> 2434.00s] loss instead of the one we have for regression task is because in optimization, the shape of this
+[2434.00s -> 2438.80s] loss is much easier to optimize for a regression task than it is for a classification task.
+[2438.80s -> 2442.96s] Advice for us. I'm not going to go into the details of that, but that's the intuition.
+[2444.72s -> 2447.52s] Okay, let's go. Have fun with neural networks.
+[2451.76s -> 2474.08s] So we stick to our first goal.
+[2474.40s -> 2487.04s] Given an image, tell us if there is cut or no cut. This is one. This is zero.
+[2487.04s -> 2491.84s] But now we're going to make a network a little more complex. We're going to add some parameters.
+[2491.84s -> 2499.20s] So I get my picture of the cut. Cut is moving.
+[2504.80s -> 2508.72s] Okay. And what I'm going to do is that I'm going to put more neurons than before.
+[2511.20s -> 2519.20s] Maybe something like that.
+[2534.08s -> 2562.40s] So using the same notation, you see that my square bracket here is two, indicating that there is a
+[2562.40s -> 2573.36s] layer here, which is the second layer. While this one is the first layer and this one is the third
+[2573.36s -> 2585.76s] layer. Everybody's up to speed with the notations. Cool. So now, notice that when you make a choice
+[2585.76s -> 2592.96s] of architecture, you have to be careful of one thing. Is that the output layer has to have the
+[2592.96s -> 2599.52s] same number of neurons as you want, the number of classes to be for a classification and one for a
+[2599.52s -> 2613.12s] regression. So how many parameters does this network have? Can someone quickly give me the
+[2613.12s -> 2624.08s] thought process? So how much here? Yeah, like 3n plus 3, let's say.
+[2624.08s -> 2634.00s] What's the number of? What's the number of?
+[2634.00s -> 2645.12s] Three, what's the number of? Yeah, correct. So in here, you would have 3n weights plus 3 biases.
+[2646.00s -> 2652.08s] Here, you would have 2 times 3 weights plus 2 biases because you have 3 neurons connected to 2
+[2653.04s -> 2658.80s] neurons and here you will have 2 times 1 plus 1 bias. So this is the total number of parameters.
+[2660.88s -> 2664.96s] So you see that we didn't add too much parameters. Most of the parameters are still in the input
+[2664.96s -> 2675.44s] layer. Let's define some vocabulary. The first word is layer. Layer denotes neurons that are not
+[2675.44s -> 2681.36s] connected to each other. These two neurons are not connected to each other. We call this cluster
+[2681.36s -> 2688.32s] of neurons a layer and this has 3 layers. We would use input layer to define the first layer,
+[2689.12s -> 2694.08s] output layer to define the third layer because it directly sees the output and we would
+[2694.08s -> 2702.64s] call the second layer a hidden layer. And the reason we call it hidden is because the inputs and
+[2702.64s -> 2708.96s] the outputs are hidden from this layer. It means the only thing that this layer sees as input is what
+[2708.96s -> 2716.24s] the previous layer gave it. So it's an abstraction of the inputs but it's not the input. Does it make
+[2716.24s -> 2722.24s] sense? And same, it doesn't see the output. It just gives what it understood to the last neuron
+[2722.24s -> 2729.60s] that will compare the output to the ground truth. So now why are neural network interesting and why
+[2729.60s -> 2738.00s] do we call this hidden layer? It's because if you train this network on cat classification with a
+[2738.00s -> 2744.56s] lot of images of cats, you would notice that the first layers are going to understand the fundamental
+[2744.56s -> 2751.52s] concepts of the image, which is the edges. This neuron is going to be able to detect this type of edges.
+[2752.40s -> 2758.56s] This neuron probably going to detect some other type of edge. This neuron may be this type of edge.
+[2759.68s -> 2763.04s] Then what's going to happen is that this neuron are going to communicate what they found on the
+[2763.04s -> 2769.04s] image to the next layers neuron. And this neuron is going to use the edges that this guy is found
+[2769.04s -> 2775.36s] to figure out that there are ears. While this one is going to figure out there is a mouth
+[2776.96s -> 2781.44s] and so on if you have several neurons. And they're going to communicate what they understood
+[2781.44s -> 2786.56s] to the output neuron that is going to construct the face of the cats based on what it received
+[2787.20s -> 2792.72s] and be able to tell if there is a cat or no. So the reason it's called hidden layer is because we
+[2793.20s -> 2798.24s] don't really know what it's going to figure out. But with enough data it should understand very complex
+[2798.24s -> 2803.44s] information about the data. The deeper you go, the more complex information the neurons are able to
+[2803.44s -> 2820.56s] understand. Let me give you another example which is a house prediction example. House price prediction.
+[2822.88s -> 2844.72s] So let's assume that our inputs are number of bedrooms, size of the house, zip code,
+[2844.72s -> 2855.52s] and wealth of the neighborhood. Let's say what we will build is a network that has three neurons
+[2856.72s -> 2864.00s] in the first layer and one neuron in the output layer. So what's interesting is that as a human if
+[2864.00s -> 2872.16s] you were to build this network and like hand engineer it you would say that okay zip code and wealth
+[2872.88s -> 2882.32s] or sorry, let's do that. Zip code and wealth are able to tell us about the school quality in the
+[2882.32s -> 2891.76s] neighborhood. The quality of the school that is next to the house probably. As a human you would
+[2891.76s -> 2897.28s] say these are probably good features to predict that. The zip code is going to tell us if the
+[2897.28s -> 2908.80s] neighborhood is walkable or not. Probably. The size and the number of bedrooms is going to tell us
+[2908.80s -> 2915.76s] what's the size of the family that can fit in this house. And these three are probably better
+[2915.76s -> 2923.20s] information than these in order to finally predict the price. So that's a way to hand engineer that
+[2923.20s -> 2930.48s] by hand as a human in order to give human knowledge to the network to figure out the price.
+[2931.44s -> 2936.48s] In practice what we do here is that we use a fully connected
+[2939.52s -> 2947.44s] layer fully connected. What does it mean? It means that we connect every input of a layer,
+[2948.40s -> 2954.40s] every input to the first layer, every output of the first layer to the input of the third layer
+[2954.40s -> 2960.72s] and so on. So all the neurons from one layer to another are connected with each other. What we're
+[2960.72s -> 2966.72s] saying is that we will let the network figure these out. We will net the neurons of the first
+[2966.72s -> 2971.52s] layer figure out what's interesting for the second layer to make the price prediction. So we will
+[2971.52s -> 2979.76s] not tell these to the network instead. We will fully connect the network and so on.
+[2983.60s -> 2987.84s] We will fully connect the network and let it figure out what are the interesting features.
+[2987.84s -> 2992.24s] And oftentimes the network is going to be able better than humans to find these what are the
+[2992.24s -> 2998.88s] features that are representative. Sometimes you may hear neural networks referred as black box
+[2998.88s -> 3005.92s] models. The reason is we will not understand what this edge would correspond to. It's hard to
+[3005.92s -> 3013.60s] figure out that this neuron is detecting a weighted average of the input features. Does it make sense?
+[3017.52s -> 3023.76s] Another word you might hear is end to end learning. The reason we talk about end to end learning
+[3023.84s -> 3030.72s] is because we have an input, a ground truth, and we don't constrain the network in the middle.
+[3030.72s -> 3035.68s] We let it learn whatever it has to learn and we call it end to end learning because we're just
+[3035.68s -> 3043.60s] training based on the input and the output.
+[3043.92s -> 3051.44s] one, two, a half.
+[3057.84s -> 3061.04s] One, two, three,
+[3063.04s -> 3068.32s] two, three,
+[3068.32s -> 3081.28s] Let's delve more into the math of this network, the neural network that we have here, which
+[3081.28s -> 3085.04s] has an input layer, a hidden layer, and an output layer.
+[3085.04s -> 3089.94s] Let's try to write down the equations that run the input and for propagated through the
+[3089.94s -> 3092.82s] output.
+[3092.82s -> 3099.00s] We first have z1, that is the linear part of the first layer, that is computed using
+[3099.00s -> 3105.18s] w1 times x plus b1.
+[3105.18s -> 3113.42s] Then this z1 is given to an activation, let's say it's sigmoid, which is sigmoid of z1.
+[3113.42s -> 3121.10s] z2 is then the linear part of the second neuron, which is going to take the output of the
+[3121.10s -> 3128.42s] previous layer, multiplied by its weights and add a bias.
+[3128.42s -> 3135.42s] The second activation is going to take the sigmoid of z2.
+[3135.42s -> 3141.98s] And finally we have the third layer, which is going to multiply its weights with the output
+[3141.98s -> 3147.46s] of the layer preceding it and add its bias.
+[3147.46s -> 3159.42s] And finally we have the third activation, which is simply the sigmoid of z3.
+[3159.42s -> 3165.82s] So what is interesting to notice between these equations and the equations that we wrote
+[3165.82s -> 3172.74s] here is that we put everything in matrices.
+[3172.74s -> 3182.34s] So it means this a3 that I have here, sorry, for three neurons I wrote three equations,
+[3182.34s -> 3188.86s] here for three neurons in the second layer, I just wrote a single equation to summarize
+[3188.86s -> 3190.54s] it.
+[3190.54s -> 3193.74s] But the shape of these things are going to be vectors.
+[3193.74s -> 3196.70s] So let's go over the shapes, let's try to define them.
+[3196.70s -> 3207.34s] z1 1 is going to be x, which is n by 1 times w, which has to be 3 by n because it connects
+[3207.34s -> 3210.34s] three neurons to the input.
+[3210.34s -> 3213.66s] So this z has to be 3 by 1.
+[3213.66s -> 3218.46s] And it makes sense because we have three neurons.
+[3218.46s -> 3220.70s] Now let's go deeper.
+[3221.54s -> 3225.46s] a1 is just the sigmoid of z1 so it doesn't change the shape.
+[3225.46s -> 3227.70s] It keeps the 3 by 1.
+[3227.70s -> 3235.86s] z2, we know it, it has to be 2 by 1 because there are two neurons in the second layer.
+[3235.86s -> 3238.62s] And it helps us figure out what w2 would be.
+[3238.62s -> 3245.10s] We know a1 is 3 by 1, it means that w2 has to be 2 by 3.
+[3245.10s -> 3250.46s] And if you count the edges between the first and the second layer here, you will find six
+[3250.46s -> 3253.10s] ages, two times 3.
+[3253.10s -> 3256.66s] a2 same shape as z2.
+[3256.66s -> 3258.66s] z3 1 by 1.
+[3258.66s -> 3261.38s] a3 1 by 1.
+[3261.38s -> 3267.18s] w3 it has to be 1 by 2 because a2 is 2 by 1.
+[3267.18s -> 3269.30s] And same for b.
+[3269.30s -> 3278.14s] b is going to be the number of neurons, so 3 by 1, 2 by 1, and finally 1 by 1.
+[3278.14s -> 3283.02s] So I think it's usually very helpful even when coding these type of equations to know all
+[3283.02s -> 3285.14s] the shapes that are involved.
+[3285.14s -> 3287.74s] Are you guys like totally okay with the shapes?
+[3287.74s -> 3289.50s] Super easy to figure out?
+[3289.50s -> 3291.50s] Okay, cool.
+[3291.50s -> 3299.26s] So now what is interesting is that we will try to vectorize the code even more.
+[3299.30s -> 3305.54s] Does someone remember the difference between stochastic gradient descent and gradient descent?
+[3305.54s -> 3308.26s] What's the difference?
+[3308.26s -> 3311.26s] The difference?
+[3311.26s -> 3314.30s] Upgrade the time every sample versus upgrade.
+[3314.30s -> 3315.30s] Exactly.
+[3315.30s -> 3322.06s] Stochastic gradient descent is updates the weights and the bias after you see every example.
+[3322.06s -> 3324.90s] So the direction of the gradient is quite noisy.
+[3324.90s -> 3327.58s] It doesn't represent very well the entire batch.
+[3327.58s -> 3332.50s] Why gradient descent or batch gradient descent is updates after you've seen the whole batch
+[3332.50s -> 3334.46s] of examples.
+[3334.46s -> 3336.02s] And the gradient is much more precise.
+[3336.02s -> 3341.86s] It points to the direction you want to go to.
+[3341.86s -> 3349.26s] So what we're trying to do now is to write down these equations if instead of giving one
+[3349.26s -> 3354.86s] single cat image, we had given a bunch of images that either have a cat or not a cat.
+[3355.50s -> 3359.54s] So now our input x.
+[3359.54s -> 3375.02s] So what happens for an input batch of m examples?
+[3375.02s -> 3388.94s] So now our x is not anymore a single column vector.
+[3388.94s -> 3397.58s] It's a matrix with the first image corresponding to x1, the second image corresponding to x2,
+[3397.58s -> 3403.06s] and so on until the mth image corresponding to xm.
+[3403.06s -> 3409.82s] And I'm introducing a new notation, which is the parenthesis superscript corresponding
+[3409.82s -> 3416.94s] to the id of the example.
+[3416.94s -> 3426.70s] So square brackets for the layer, round brackets for the id of the example we're talking about.
+[3426.70s -> 3430.82s] So just to give more context on what we're trying to do, we know that this is a bunch
+[3430.82s -> 3432.78s] of operations.
+[3432.78s -> 3437.74s] We just have a network with inputs hidden and output layer.
+[3437.74s -> 3440.42s] We could have a network with a thousand layer.
+[3440.42s -> 3443.06s] The more layers we have, the more computation.
+[3443.06s -> 3445.70s] And it quickly goes up.
+[3445.70s -> 3450.94s] So what we want to do is to be able to parallelize our code or our computation as much as possible,
+[3450.94s -> 3454.34s] by giving batches of inputs and parallelizing these equations.
+[3454.34s -> 3459.10s] So let's see how these equations are modified when we give it a batch of m inputs.
+[3459.10s -> 3470.82s] I will use capital letters to denote the equivalence of the lower case letters, but for a batch
+[3470.82s -> 3472.50s] of input.
+[3472.50s -> 3484.74s] So z1 as an example would be w1, let's use the same actually, w1 times x plus b1.
+[3484.74s -> 3488.26s] So let's analyze what z1 would look like.
+[3488.26s -> 3496.86s] z1, we know that for every input example of the batch, we will get 1 z1.
+[3496.86s -> 3500.62s] So it should look like this.
+[3500.62s -> 3513.70s] Then we have to figure out what have to be the shapes of this equation in order to end up
+[3513.70s -> 3514.70s] with this.
+[3514.70s -> 3517.46s] We know that z1 was 3 by 1.
+[3517.46s -> 3525.02s] It means capital z1 has to be 3 by m.
+[3525.02s -> 3528.82s] Because each of these column vectors are 3 by 1.
+[3528.82s -> 3530.62s] And we have m of them.
+[3530.62s -> 3535.06s] Because for each input we forward propagate through the network, we get these equations.
+[3535.06s -> 3537.22s] So for the first cat image, we get these equations.
+[3537.22s -> 3541.74s] For the second cat image, we get again equations like that and so on.
+[3541.74s -> 3549.34s] So what is the shape of x?
+[3549.34s -> 3550.34s] We have it above.
+[3550.34s -> 3555.78s] We know that it's n by m.
+[3555.78s -> 3558.50s] What is the shape of w1?
+[3558.50s -> 3559.98s] It didn't change.
+[3559.98s -> 3561.14s] w1 doesn't change.
+[3561.14s -> 3565.30s] It's not because I will give a thousand inputs to my network that the parameters are going
+[3565.30s -> 3568.02s] to be more.
+[3568.02s -> 3572.62s] So the parameter number stays the same, even if I give more inputs.
+[3572.62s -> 3577.06s] And so this has to be 3 by n in order to match z1.
+[3577.06s -> 3583.54s] Now the interesting thing is that there is an algebraic problem here.
+[3583.54s -> 3584.90s] What is the algebraic problem?
+[3584.90s -> 3589.26s] We said that the number of parameters doesn't change.
+[3589.26s -> 3595.06s] It means that w has the same shape as it has before, as it had before.
+[3595.06s -> 3598.66s] b should have the same shape as it had before, right?
+[3598.66s -> 3600.98s] Should be 3 by 1.
+[3600.98s -> 3607.30s] What's the problem of this equation?
+[3607.30s -> 3608.62s] Exactly.
+[3608.62s -> 3615.18s] We're summing a 3 by m matrix to a 3 by 1 vector.
+[3615.18s -> 3616.42s] This is not possible in math.
+[3616.42s -> 3617.46s] It doesn't work.
+[3617.46s -> 3618.30s] It doesn't match.
+[3618.30s -> 3624.30s] When you do some summations or subtraction, you need the two terms to be the same shape.
+[3624.30s -> 3629.50s] Because you will do an element-wise addition, an element-wise subscription.
+[3629.50s -> 3631.50s] So what's the trick that is used here?
+[3631.50s -> 3642.50s] It's a technique called broadcasting.
+[3642.50s -> 3646.46s] Broadcasting is the fact that we don't want to change the number of parameters.
+[3646.46s -> 3648.54s] It should stay the same.
+[3648.54s -> 3654.22s] But we still want this operation to be able to be written in parallel version.
+[3654.22s -> 3657.46s] So we still want to write this equation because we want to parallelize our code.
+[3657.46s -> 3658.94s] But we don't want to add more parameters.
+[3658.94s -> 3660.26s] It doesn't make sense.
+[3660.26s -> 3666.90s] So what we're going to do is that we're going to create a vector b tilde 1, which is going
+[3666.90s -> 3684.18s] to be b1, repeated 3 times, sorry, repeated m times.
+[3684.18s -> 3689.26s] So we just keep the same number of parameters, but just repeat them in order to be able to
+[3689.26s -> 3693.06s] write my code in parallel.
+[3693.06s -> 3694.86s] This is called broadcasting.
+[3694.86s -> 3699.66s] And what is convenient is that for those of you who, the homeworks are in MATLAB or
+[3699.66s -> 3701.14s] Python.
+[3701.14s -> 3702.30s] MATLAB, OK.
+[3702.30s -> 3704.74s] So in MATLAB, no, Python?
+[3704.74s -> 3707.82s] Python, OK.
+[3707.82s -> 3708.50s] Python.
+[3708.50s -> 3712.82s] So in Python, there is a package that is often used to code these equations.
+[3712.82s -> 3713.82s] It's numpy.
+[3713.82s -> 3715.10s] Some people call it numpy.
+[3715.10s -> 3716.18s] Not sure.
+[3716.18s -> 3724.10s] So numpy, basically numrical Python, we directly do the broadcasting.
+[3724.10s -> 3733.26s] It means if you sum this 3 by m matrix with a 3 by 1 parameter vector, it's going to automatically
+[3733.26s -> 3737.38s] reproduce the parameter vector m times so that the equation works.
+[3737.38s -> 3739.38s] It's called broadcasting.
+[3739.38s -> 3740.86s] Does it make sense?
+[3740.86s -> 3745.78s] So because we're using this technique, we're able to rewrite all these equations with capital
+[3745.78s -> 3748.06s] letters.
+[3748.06s -> 3752.50s] You want to do it together or do you want to do it on your own?
+[3752.50s -> 3756.78s] Who wants to do it on their own?
+[3756.78s -> 3757.30s] OK.
+[3757.30s -> 3760.30s] So let's do it on their own.
+[3760.30s -> 3761.30s] On your own.
+[3761.30s -> 3765.50s] So rewrite these with capital letters and figure out the shapes.
+[3765.50s -> 3769.02s] I think you can do it at home where we're not going to do it here, but make sure you understand
+[3769.02s -> 3769.54s] all the shapes.
+[3769.54s -> 3770.54s] Yeah.
+[3770.54s -> 3790.22s] So the question is how is this different from principal component analysis?
+[3790.22s -> 3795.46s] This is a supervised learning algorithm that will be used to predict the price of a house.
+[3795.46s -> 3797.86s] Principal component analysis doesn't predict anything.
+[3797.86s -> 3804.74s] It gets an input matrix x, normalizes it, computes the covariance matrix, and then figures
+[3804.74s -> 3809.70s] out what are the principal components by doing the eigenvalue decomposition.
+[3809.70s -> 3815.74s] But the outcome of PCA is you know that the most important features of your data sets
+[3815.74s -> 3819.46s] x are going to be these features.
+[3819.46s -> 3821.26s] Here we're not looking at the features.
+[3821.26s -> 3822.74s] We're only looking at the outputs.
+[3822.74s -> 3825.18s] That's what is important to us.
+[3825.18s -> 3826.18s] Yes.
+[3826.18s -> 3842.06s] So the question is can you explain why the first layer would see the edges?
+[3842.06s -> 3843.46s] Is there any tuition behind it?
+[3843.46s -> 3847.54s] It's not always going to see the edges, but it's often time going to see edges.
+[3847.54s -> 3854.30s] Because in order to detect a human face, let's say, you will train an algorithm to find
+[3854.30s -> 3855.50s] out whose face it is.
+[3855.50s -> 3858.70s] So it has to understand the faces very well.
+[3858.70s -> 3862.30s] You need the network to be complex enough to understand very detailed features of the
+[3862.30s -> 3863.30s] face.
+[3863.30s -> 3869.42s] And usually this neuron, what it sees as inputs are pixels.
+[3869.42s -> 3875.22s] So it means every edge here is the multiplication of a weight by a pixel.
+[3875.22s -> 3878.26s] So it sees pixels.
+[3878.26s -> 3882.42s] It cannot understand the face as a whole because it sees only pixels.
+[3882.42s -> 3885.10s] It's very granular information for it.
+[3885.10s -> 3890.34s] So it's going to check if pixels nearby have the same color and understand that there
+[3890.34s -> 3892.34s] is an edge there.
+[3892.34s -> 3896.38s] But it's too complicated to understand a whole face in the first layer.
+[3896.38s -> 3900.94s] However, if it understands a little more than a pixel information, it can give it to the
+[3900.94s -> 3902.46s] next neuron.
+[3902.46s -> 3905.42s] This neuron will receive more than pixel information.
+[3905.42s -> 3909.66s] It will receive a little more complex, like edges.
+[3909.66s -> 3913.70s] And then it will use this information to build on top of it and build the features of
+[3913.70s -> 3914.70s] the face.
+[3914.70s -> 3917.90s] So what I'm trying to sum up is that these neurons only see the pixels, so they're not
+[3917.90s -> 3920.34s] able to build more than the edges.
+[3920.34s -> 3924.22s] That's the minimum thing that they can, the maximum team they can build.
+[3924.22s -> 3925.98s] And it's a complex topic.
+[3925.98s -> 3930.66s] Interpretation of neural network is a highly research topic, a big research topic.
+[3930.66s -> 3937.74s] So nobody figured out exactly how all the neurons evolve.
+[3937.74s -> 3951.50s] So we have to do some more question and then we move on.
+[3951.50s -> 3957.66s] So the question is how do you decide how many neurons per layer, how many layers, what's
+[3957.66s -> 3959.66s] the architecture of your neural network.
+[3959.66s -> 3962.34s] There are two things to take into consideration, I would say.
+[3962.34s -> 3965.66s] First, nobody knows the right answer, so you have to test it.
+[3965.66s -> 3970.42s] So you guys talked about training sets, validation sets and test sets.
+[3970.42s -> 3976.82s] So what we would do is we would try 10 different architectures, train the network on these, look
+[3976.82s -> 3981.70s] at the validation sets, accuracy of all these, and decide which one seems to be the best.
+[3981.70s -> 3984.70s] That's how we figure out what's the right network size.
+[3984.70s -> 3987.62s] On top of that, using experience is often valuable.
+[3987.62s -> 3994.06s] So if you give me a problem, I try always to gauge how complex is the problem.
+[3994.06s -> 4001.18s] And cat classification, do you think it's easier or harder than day and night classification?
+[4001.18s -> 4004.50s] So day and night classification is, I give you an image, I ask you to predict if it was
+[4004.50s -> 4006.66s] taken during the day or during the night.
+[4006.66s -> 4009.58s] And on the other hand, you want to detect if there's a cat on the image or not.
+[4009.58s -> 4015.78s] Which one is easier, which one is harder?
+[4015.78s -> 4018.34s] Who thinks cat classification is harder?
+[4018.34s -> 4022.30s] Okay, I think people agree, cat classification seems harder.
+[4022.30s -> 4024.58s] I try because there are many breeds of cats.
+[4024.58s -> 4026.06s] Can look like different things.
+[4026.06s -> 4030.26s] There's not many breeds of nights, I guess.
+[4030.26s -> 4034.50s] One thing that might be challenging in day and night classification is if you want also
+[4034.50s -> 4037.30s] to figure it out in house, like inside.
+[4037.30s -> 4042.30s] You know, maybe there is a tiny window there and I'm able to tell that it's the day.
+[4042.30s -> 4045.78s] But for a network to understand it, you will need a lot more data than if only you wanted
+[4045.78s -> 4047.18s] to work outside.
+[4047.18s -> 4048.18s] Different.
+[4048.18s -> 4050.74s] So these problems all have their own complexity.
+[4050.74s -> 4054.54s] Based on their complexity, I think the network should be deeper.
+[4054.54s -> 4056.46s] The more complex usually is the problem.
+[4056.46s -> 4060.98s] The more data you need in order to figure out the output, the more deeper should be the
+[4060.98s -> 4061.98s] network.
+[4061.98s -> 4063.22s] That's an intuition, let's say.
+[4063.22s -> 4072.46s] Okay, let's move on, guys, because I think we have about 12 more minutes.
+[4072.46s -> 4079.70s] Okay.
+[4079.70s -> 4099.14s] Let's try to write the loss function for this problem.
+[4099.14s -> 4104.54s] So now that we have our network, we have written this propagation equation and I will
+[4104.54s -> 4107.46s] call it four propagation, because it's going forward.
+[4107.46s -> 4110.54s] It's going from the input to the output.
+[4110.54s -> 4115.98s] Later on, when we will derive these equations, we will call them backward propagation, because
+[4115.98s -> 4119.50s] we're starting from the loss and going backwards.
+[4119.50s -> 4125.22s] So let's talk about the optimization problem.
+[4125.22s -> 4137.78s] I think w1, w2, w3, b1, b2, b3.
+[4137.78s -> 4139.42s] We have a lot of stuff to optimize, right?
+[4139.42s -> 4142.86s] We have to find the right values for this and remember, model equals architecture plus
+[4142.86s -> 4143.86s] parameter.
+[4143.86s -> 4147.74s] We have our architecture if we have our parameters we're done.
+[4147.74s -> 4154.50s] So in order to do that, we have to define an objective function.
+[4154.50s -> 4159.50s] The loss is sometimes cost function.
+[4159.50s -> 4164.82s] So usually we would call it loss if there is only one example in the batch and cost if
+[4164.82s -> 4173.46s] there is multiple examples in the batch.
+[4173.46s -> 4178.66s] So the loss function, let's define the cost function.
+[4178.66s -> 4184.86s] The cost function j depends on y hat and y.
+[4184.86s -> 4195.62s] So y hat is a3.
+[4195.62s -> 4198.30s] It depends on y hat and y.
+[4198.30s -> 4206.22s] And we will set it to be the sum of the loss functions, li.
+[4206.22s -> 4207.62s] And I will normalize it.
+[4207.62s -> 4214.18s] It's not mandatory, but normalize it with 1 over n.
+[4214.18s -> 4218.90s] So what does this mean is that we're going for batch gradient descent.
+[4218.90s -> 4225.22s] We want to compute the loss function for the whole batch, parallelize our code, and then
+[4225.22s -> 4230.82s] calculate the cost function that will be then derived to give us the direction of the
+[4230.82s -> 4236.94s] gradient that is the average direction of all the derivation with respect to the whole
+[4236.94s -> 4239.62s] input batch.
+[4239.62s -> 4246.50s] And li will be the loss function corresponding to 1 parameter.
+[4246.50s -> 4252.50s] So what's the error on this specific 1 input, sorry, not parameter.
+[4252.50s -> 4269.86s] And it will be the logistic loss.
+[4269.86s -> 4274.86s] You've already seen these equations, I believe.
+[4274.86s -> 4280.86s] So now, is it more complex to take a derivative with respect to j, like of j with respect to
+[4280.86s -> 4282.94s] parameters or of l?
+[4282.94s -> 4286.94s] What's the most complex between this one?
+[4286.94s -> 4299.78s] Let's say we're taking the derivative with respect to w2, compared to this one.
+[4299.78s -> 4304.42s] Which one is the hardest?
+[4304.42s -> 4308.62s] Who thinks j is the hardest?
+[4308.62s -> 4311.66s] We think it doesn't matter.
+[4311.66s -> 4313.58s] It doesn't matter.
+[4313.58s -> 4316.66s] Because derivation is a linear operation, right?
+[4316.66s -> 4318.70s] So you can just take the derivative inside.
+[4318.70s -> 4324.34s] And you will see that if you know this, you just have to take the sum over this.
+[4324.34s -> 4328.86s] So instead of computing all the derivatives on j, we will compute them on l.
+[4328.86s -> 4330.22s] But it's totally equivalent.
+[4330.22s -> 4334.50s] There's just one more step at the end.
+[4334.50s -> 4337.78s] So now we define our loss function.
+[4337.78s -> 4340.78s] Super.
+[4340.78s -> 4342.18s] We define our loss function.
+[4342.18s -> 4343.90s] And the next step is optimize.
+[4343.90s -> 4362.42s] So we have to compute a lot of derivatives.
+[4362.42s -> 4372.78s] And that's called backward propagation.
+[4372.78s -> 4376.14s] So the question is why is it called backward propagation?
+[4376.14s -> 4380.30s] It's because what we want to do ultimately is this.
+[4380.30s -> 4389.42s] For any l equals 1 to 3, we want to do that.
+[4389.42s -> 4401.26s] Wl equals Wl minus alpha derivative of j, with respect to Wl.
+[4401.26s -> 4410.10s] And BL equals BL minus alpha derivative of j, with respect to BL.
+[4410.10s -> 4416.70s] So we want to do that for every parameter in layer 1, 2, and 3.
+[4416.70s -> 4419.42s] So it means we have to compute all these derivatives.
+[4419.42s -> 4425.74s] We have to compute the derivative of the cost with respect to W1, W2, W3, B1, B2, B3.
+[4425.74s -> 4427.22s] You've done it with logistic regression.
+[4427.22s -> 4429.74s] We're going to do it with a neural network.
+[4429.74s -> 4432.86s] And you're going to understand why it's called backward propagation.
+[4432.86s -> 4434.78s] Which one do you want to start with?
+[4434.78s -> 4436.30s] Which derivative?
+[4436.30s -> 4440.02s] You want to start with the derivative with respect to W1, W2, or W3?
+[4440.02s -> 4445.06s] I'll say assuming we'll do the bias later.
+[4445.06s -> 4446.74s] W1?
+[4446.74s -> 4447.58s] W1?
+[4447.58s -> 4450.26s] You think W1 is a good idea?
+[4450.26s -> 4454.26s] I don't want to do W1.
+[4454.26s -> 4455.86s] I think we should do W3.
+[4455.86s -> 4463.50s] And the reason is because if you look at this loss function,
+[4463.50s -> 4468.06s] do you think the relation between W3 and this loss function is easier to understand,
+[4468.06s -> 4472.22s] or the relation between W1 and this loss function?
+[4472.22s -> 4474.42s] It's the relation between W3 and this loss function.
+[4474.42s -> 4477.50s] Because W3 happens much later in the network.
+[4477.50s -> 4482.30s] So if you want to understand how much should we move W1 in order to make the loss move,
+[4482.30s -> 4486.70s] it's much more complicated than answering the question how much should W3 move to move
+[4486.70s -> 4488.06s] the loss?
+[4488.06s -> 4493.06s] Because there is much more connections if you want to compute with W1.
+[4493.06s -> 4494.82s] So that's why we call it backward propagation.
+[4494.82s -> 4498.02s] It's because we will start with the top layer, the one that's the closest to the loss
+[4498.02s -> 4509.62s] function, derive the derivative of j with respect to W1.
+[4509.62s -> 4515.94s] And once we computed this derivative, which we're going to do next week, once we computed
+[4515.94s -> 4521.58s] this number, we can then tackle this one.
+[4521.58s -> 4524.78s] Oh, sorry, yeah, thanks.
+[4525.78s -> 4532.30s] Yeah, once we computed this number, we will be able to compute this one very easily.
+[4532.30s -> 4533.78s] Why very easily?
+[4533.78s -> 4537.06s] Because we can use the chain rule of calculus.
+[4537.06s -> 4538.74s] So let's see how it works.
+[4538.74s -> 4544.74s] I'm just going to give you the one minute page on back prop, but we'll do it next week
+[4544.74s -> 4545.74s] together.
+[4545.74s -> 4551.42s] So if we had to compute this derivative, what I will do is that I will separate it into
+[4551.42s -> 4553.74s] several derivatives that are easier.
+[4553.74s -> 4559.06s] I will separate it into the derivative of j with respect to something, with this something
+[4559.06s -> 4561.46s] with respect to W3.
+[4561.46s -> 4565.38s] And the question is, what should this something be?
+[4565.38s -> 4567.94s] I will look at my equations.
+[4567.94s -> 4571.10s] I know that j depends on y hat.
+[4571.10s -> 4573.98s] And I know that y hat depends on z3.
+[4573.98s -> 4575.50s] Y hat is the same thing as a3.
+[4575.50s -> 4578.26s] I know it depends on z3.
+[4578.26s -> 4581.26s] So why don't I include z3 in my equation?
+[4581.26s -> 4583.66s] I also know that z3 depends on W3.
+[4583.66s -> 4587.14s] And the derivative of z3 with respect to W3 is super easy.
+[4587.14s -> 4589.74s] It's just a2 transpose.
+[4589.74s -> 4595.94s] So I will just make a quick hack and say that this derivative is the same as taking it
+[4595.94s -> 4598.78s] with respect to a3.
+[4598.78s -> 4602.94s] Taking the derivative of a3 with respect to z3.
+[4602.94s -> 4610.06s] And taking the derivative of z3 with respect to W3.
+[4610.06s -> 4615.74s] So you see, same derivative calculated in different ways.
+[4615.74s -> 4616.78s] And I know these.
+[4616.78s -> 4622.26s] I know these are pretty easy to compute.
+[4622.26s -> 4624.02s] So that's why we call it back propagation.
+[4624.02s -> 4627.86s] It's because I will use the chain rule to compute the derivative with W3.
+[4627.86s -> 4638.94s] And then, when I want to do it for W2, I'm going to insert the derivative with z3 times
+[4638.94s -> 4648.94s] the derivative of z3 with respect to a2 times the derivative of a2 with respect to z2.
+[4648.94s -> 4654.30s] And the derivative of z2 with respect to W2.
+[4654.30s -> 4664.06s] Does this make sense that this thing here is the same thing as this?
+[4664.06s -> 4668.26s] It means if I want to compute the derivative of W2, I don't need to compute this anymore.
+[4668.26s -> 4670.62s] I already did it for W3.
+[4670.62s -> 4673.58s] I just need to compute those, which are easy ones.
+[4673.58s -> 4674.46s] And so on.
+[4674.46s -> 4682.70s] If I want to compute the derivative of j with respect to W1, I'm not going to decompose
+[4682.70s -> 4683.62s] all the thing again.
+[4683.62s -> 4689.66s] I'm just going to take the derivative of j with respect to z2, which is equal to this whole
+[4689.66s -> 4691.26s] thing.
+[4691.26s -> 4697.86s] And then I'm going to multiply it by the derivative of z2 with respect to a1 times the derivative
+[4697.86s -> 4707.06s] of z1 with respect to w1.
+[4707.06s -> 4709.06s] And again, this thing I know it already.
+[4709.06s -> 4714.06s] I computed it previously just for this one.
+[4714.06s -> 4718.10s] So what's interesting about it is that I'm not going to redo the work I did.
+[4718.10s -> 4723.34s] I'm just going to store the right values while back propagating and continue to derivative.
+[4723.34s -> 4729.46s] One thing that you need to notice though is that you need this forward propagation equation
+[4729.46s -> 4734.82s] in order to remember what should be the path to taking your chain rule.
+[4734.82s -> 4740.46s] Because you know that this derivative of j with respect to W3, I cannot use it as it
+[4740.46s -> 4743.78s] is because W3 is not connected to the previous layer.
+[4743.78s -> 4748.98s] If you look at this equation, A2 doesn't depend on W3.
+[4748.98s -> 4750.78s] It depends on z3.
+[4750.78s -> 4752.38s] Sorry, like my butt.
+[4752.38s -> 4753.38s] It depends.
+[4753.38s -> 4754.38s] No, sorry.
+[4754.38s -> 4761.42s] What I wanted to say is that z2 is connected to W2.
+[4761.42s -> 4766.26s] But A1 is not connected to W2.
+[4766.26s -> 4771.14s] So you want to choose the path that you're going through in the proper way so that there's
+[4771.14s -> 4774.18s] no cancellation in these derivatives.
+[4774.18s -> 4785.18s] You cannot compute the derivative of W2 with respect to A1.
+[4785.18s -> 4786.94s] You cannot compute that.
+[4786.94s -> 4789.58s] You don't know it.
+[4789.58s -> 4792.02s] So I think we're done for today.
+[4792.02s -> 4796.70s] So one thing that I'd like you to do if you have time is just think about the things that
+[4796.70s -> 4799.66s] can be tweaked in a neural network.
+[4799.66s -> 4802.46s] When you build a neural network, you're not done.
+[4802.46s -> 4803.46s] You have to tweak it.
+[4803.46s -> 4804.46s] You have to tweak the activations.
+[4804.46s -> 4805.46s] You have to tweak the loss function.
+[4805.46s -> 4806.46s] There's many things you can tweak.
+[4806.46s -> 4808.46s] And that's what we're going to see next week.
+[4808.46s -> 4809.02s] OK, thanks.

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, FileText, Clock, HardDrive } from 'lucide-react';
 
 interface FileData {
   name: string;
@@ -44,6 +44,19 @@ const FilePage = () => {
       'gif': 'Image'
     };
     return typeMap[extension] || 'Unknown Type';
+  };
+
+  const getFileTypeColor = (fileType: string): string => {
+    const colorMap: { [key: string]: string } = {
+      'PDF Document': 'text-red-600 bg-red-50',
+      'Word Document': 'text-blue-600 bg-blue-50',
+      'Text File': 'text-gray-600 bg-gray-50',
+      'Excel Spreadsheet': 'text-green-600 bg-green-50',
+      'PowerPoint': 'text-orange-600 bg-orange-50',
+      'Image': 'text-purple-600 bg-purple-50',
+      'Unknown Type': 'text-gray-600 bg-gray-50'
+    };
+    return colorMap[fileType] || 'text-gray-600 bg-gray-50';
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,54 +103,84 @@ const FilePage = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-50">
       {/* Left Section */}
-      <div className="w-1/2 p-4 flex flex-col">
+      <div className="w-1/2 p-6 flex flex-col">
         {/* Header Strip */}
-        <div className="flex justify-between items-center bg-gray-800 text-white h-8 px-3 rounded-md mb-4">
-          <span className="text-xs font-medium">To upload a file</span>
+        <div className="flex justify-between items-center bg-white shadow-sm rounded-xl p-4 mb-6">
+          <div className="flex items-center space-x-2">
+            <FileText className="w-5 h-5 text-blue-600" />
+            <span className="font-medium text-gray-800">File Manager</span>
+          </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white text-xs py-0.5 px-2 rounded-sm transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2"
           >
-            Upload File
+            <Upload className="w-4 h-4" />
+            <span>Upload File</span>
           </button>
         </div>
 
         {/* Files Table */}
-        <div className="bg-white rounded-lg shadow flex-1 overflow-hidden">
-          <div className="p-4">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">File Name</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Type</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Size</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Description</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Time</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {files.map((file, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 text-sm text-gray-900">{file.name}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{file.type}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{file.size}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{file.description}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{file.timestamp}</td>
+        <div className="bg-white rounded-xl shadow-sm flex-1 overflow-hidden">
+          <div className="p-6">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">File Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Size</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Time</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {files.map((file, index) => (
+                    <tr key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <FileText className="w-4 h-4 text-gray-400 mr-2" />
+                          <span className="text-sm font-medium text-gray-900">{file.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getFileTypeColor(file.type)}`}>
+                          {file.type}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <HardDrive className="w-4 h-4 mr-2 text-gray-400" />
+                          {file.size}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-sm text-gray-600">{file.description}</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                          {file.timestamp}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Right Section */}
-      <div className="w-1/2 p-4">
-        <div className="bg-white rounded-lg shadow h-full p-6">
-          <h2 className="text-lg font-semibold mb-4">AI Response</h2>
-          <div className="whitespace-pre-wrap text-gray-700">
+      <div className="w-1/2 p-6">
+        <div className="bg-white rounded-xl shadow-sm h-full p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            AI Response
+          </h2>
+          <div className="whitespace-pre-wrap text-gray-700 bg-gray-50 rounded-lg p-4 min-h-[200px]">
             {aiResponse}
           </div>
         </div>
@@ -145,23 +188,26 @@ const FilePage = () => {
 
       {/* Upload Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-semibold">Upload File</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-xl font-semibold text-gray-800">Upload File</h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-4">
+            <form onSubmit={handleSubmit} className="p-6">
               {/* File Upload Area */}
               <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer mb-4 transition-colors
-                  ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}`}
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer mb-6 transition-all duration-200
+                  ${isDragging 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+                  }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -173,31 +219,35 @@ const FilePage = () => {
                   className="hidden"
                   onChange={handleFileChange}
                 />
-                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <Upload className="w-12 h-12 mx-auto mb-4 text-blue-500" />
                 <div className="text-sm text-gray-600">
                   {selectedFile ? (
-                    <p>Selected file: {selectedFile.name}</p>
+                    <div className="flex items-center justify-center space-x-2">
+                      <FileText className="w-4 h-4" />
+                      <span>{selectedFile.name}</span>
+                    </div>
                   ) : (
-                    <p>
-                      Drag and drop your file here, or click to select
-                      <br />
-                      <span className="text-xs text-gray-500">
-                        Supported files: PDF, DOC, TXT
-                      </span>
-                    </p>
+                    <div>
+                      <p className="font-medium text-gray-800 mb-1">
+                        Drag and drop your file here, or click to select
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Supported files: PDF, DOC, TXT, XLS, PPT, Images
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
 
               {/* Description Field */}
-              <div className="mb-4">
+              <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Description
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y"
+                  className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y text-sm"
                   placeholder="Enter file description..."
                 />
               </div>
@@ -206,13 +256,13 @@ const FilePage = () => {
               <button
                 type="submit"
                 disabled={!selectedFile}
-                className={`w-full py-2 px-4 rounded-lg text-white font-medium
+                className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-200
                   ${selectedFile 
-                    ? 'bg-blue-500 hover:bg-blue-600' 
+                    ? 'bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow' 
                     : 'bg-gray-300 cursor-not-allowed'
                   }`}
               >
-                Upload
+                Upload File
               </button>
             </form>
           </div>

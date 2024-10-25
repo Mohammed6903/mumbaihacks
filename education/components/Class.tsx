@@ -6,6 +6,7 @@ import { Upload, X } from 'lucide-react';
 interface FileData {
   name: string;
   size: string;
+  type: string;
   description: string;
   timestamp: string;
 }
@@ -22,6 +23,27 @@ const FilePage = () => {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const getFileType = (fileName: string): string => {
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
+    const typeMap: { [key: string]: string } = {
+      'pdf': 'PDF Document',
+      'doc': 'Word Document',
+      'docx': 'Word Document',
+      'txt': 'Text File',
+      'rtf': 'Rich Text File',
+      'xlsx': 'Excel Spreadsheet',
+      'xls': 'Excel Spreadsheet',
+      'csv': 'CSV File',
+      'ppt': 'PowerPoint',
+      'pptx': 'PowerPoint',
+      'jpg': 'Image',
+      'jpeg': 'Image',
+      'png': 'Image',
+      'gif': 'Image'
+    };
+    return typeMap[extension] || 'Unknown Type';
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +76,7 @@ const FilePage = () => {
       const newFile: FileData = {
         name: selectedFile.name,
         size: formatFileSize(selectedFile.size),
+        type: getFileType(selectedFile.name),
         description: description,
         timestamp: new Date().toLocaleTimeString()
       };
@@ -88,6 +111,7 @@ const FilePage = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">File Name</th>
+                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Type</th>
                   <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Size</th>
                   <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Description</th>
                   <th className="px-4 py-2 text-xs font-medium text-gray-500 text-left">Time</th>
@@ -97,6 +121,7 @@ const FilePage = () => {
                 {files.map((file, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-4 py-2 text-sm text-gray-900">{file.name}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600">{file.type}</td>
                     <td className="px-4 py-2 text-sm text-gray-600">{file.size}</td>
                     <td className="px-4 py-2 text-sm text-gray-600">{file.description}</td>
                     <td className="px-4 py-2 text-sm text-gray-600">{file.timestamp}</td>

@@ -1,4 +1,4 @@
-import { Home, Users, Calendar, BarChart2, Settings, LogOut } from 'lucide-react';
+import { Home, Users, Calendar, BarChart2, Settings, LogOut, Notebook, Clock, CheckCheck } from 'lucide-react';
 
 export const teacherNavItems = [
   {
@@ -44,4 +44,19 @@ export const studentNavItems = [
     href: '/main/student/guidance',
     icon: Calendar
   },
+  {
+    name:'Lecture',
+    href:'/main/student/Lecture',
+    icon: Notebook
+  },
+  {
+    name:'Routine',
+    href:'/main/student/Routine',
+    icon: Clock
+  },
+  {
+    name:'Survey',
+    href:'/main/student/Survey',
+    icon: CheckCheck
+  }
 ];

@@ -1,8 +1,13 @@
-import React from "react";
+import React from 'react';
+import ButtonComponent from '@/components/Button'; // Adjust the path based on your folder structure
+import FilePage from '@/components/Class';
 
-
-export default function classroom() {
+const App: React.FC = () => {
     return (
-        <div>classroom</div>
-    )
-}
+        <div>
+            <FilePage />
+        </div>
+    );
+};
+
+export default App;

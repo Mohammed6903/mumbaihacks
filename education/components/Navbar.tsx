@@ -1,6 +1,13 @@
 "use client";
 import React from "react";
+import { useRouter } from 'next/router';
+
 function Navbar() {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("signup");
+  };
   return (
     <div>
       <header className="flex flex-wrap  sm:justify-start  sm:flex-nowrap w-full fixed top-7 text-sm  dark:bg-neutral-800 z-50">
@@ -54,7 +61,7 @@ function Navbar() {
               </svg>
               <span className="sr-only">Toggle</span>
             </button>
-            <button className="overflow-hidden  w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xl font-bold cursor-pointer relative z-10 group">
+            <button onClick={handleClick} className="overflow-hidden  w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xl font-bold cursor-pointer relative z-10 group">
               Sign up
               <span className="absolute w-36 h-32 -top-8 -left-2 bg-sky-200 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-right"></span>
               <span className="absolute w-36 h-32 -top-8 -left-2 bg-sky-400 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-right"></span>

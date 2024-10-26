@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 "use client";
 import React, { useState, useEffect, DragEvent, ChangeEvent } from 'react';
 import { Upload, FileText, Video, AlertCircle, Clock, MessageSquare, Sparkles, Tag } from 'lucide-react';
@@ -269,4 +267,3 @@ const VideoAnalysis: React.FC = () => {
 };
 
 export default VideoAnalysis;
->>>>>>> 5326e74d12246640439496cdcfe812462c69b682

@@ -151,6 +151,8 @@ class MediaProcessor:
 
             Respond in the following JSON format:
             {{
+                "title": "string",
+                "duration": "string",
                 "summary": "string",
                 "key_points": ["point1", "point2", ...],
                 "topics": ["topic1", "topic2", ...],
@@ -175,6 +177,7 @@ class MediaProcessor:
                     "topics": [],
                     "key_moments": []
                 }
+            
             
             await self.save_analysis(analysis=analysis_data, base_name='ai_lecture')
 
@@ -243,7 +246,7 @@ class MediaProcessor:
             
             return {
                 'transcript_path': str(transcript_path),
-                'analysis': str(self.analysis_dir),
+                'analysis': analysis,
                 'keyframes_dir': str(keyframes_dir)
             }
             

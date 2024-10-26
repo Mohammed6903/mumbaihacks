@@ -1,29 +1,109 @@
 "use client";
-import React, { useState, DragEvent, ChangeEvent } from 'react';
+import React, { useState, useEffect, DragEvent, ChangeEvent } from 'react';
 import { Upload, FileText, Video, AlertCircle, Clock, MessageSquare, Sparkles, Tag } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 
 interface AnalysisResult {
   title: string;
   duration: string;
   summary: string;
-  keyPoints: string[];
+  key_points: string[];
   sentiment: 'Positive' | 'Negative' | 'Neutral';
   topics: string[];
 }
 
 type TabType = 'video' | 'transcript';
 
+const ENDPOINTS = {
+  video: {
+    upload: 'http://localhost:8000/video/upload',
+    status: (taskId: string) => `http://localhost:8000/status/${taskId}`,
+    result: (taskId: string) => `http://localhost:8000/result/${taskId}`,
+  },
+  transcript: {
+    upload: 'http://localhost:8000/generate-analysis',
+    status: (taskId: string) => `http://localhost:8000/status/${taskId}`,
+    result: (taskId: string) => `http://localhost:8000/result/${taskId}`,
+  },
+};
+
+const useStatusPolling = (taskId: string | null, activeTab: TabType) => {
+  const [status, setStatus] = useState<'processing' | 'completed' | 'failed' | null>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!taskId) return;
+
+    const pollStatus = async () => {
+      try {
+        const response = await fetch(ENDPOINTS[activeTab].status(taskId));
+        const data = await response.json();
+
+        if (data.status === 'failed') {
+          setStatus('failed');
+          setError(data.message);
+          return;
+        }
+
+        if (data.status === 'completed') {
+          setStatus('completed');
+          const resultResponse = await fetch(ENDPOINTS[activeTab].result(taskId));
+          const resultData = await resultResponse.json();
+          setResult(resultData); // resultData should now directly match AnalysisResult
+          return;
+        }
+
+        // Continue polling if still processing
+        setTimeout(pollStatus, 2000);
+      } catch (err) {
+        setStatus('failed');
+        setError('Failed to fetch status');
+      }
+    };
+
+    pollStatus();
+
+    return () => {
+      setStatus(null);
+      setResult(null);
+      setError(null);
+    };
+  }, [taskId]);
+
+  return { status, result, error };
+};
+
 const VideoAnalysis: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('video');
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [error, setError] = useState<string>('');
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [taskId, setTaskId] = useState<string | null>(null);
+
+  const { status, result, error } = useStatusPolling(taskId, activeTab);
+
+  const analysisMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(ENDPOINTS[activeTab].upload, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setTaskId(data.task_id);
+      return data;
+    }
+  });
 
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     processFile(file);
   };
 
@@ -46,16 +126,11 @@ const VideoAnalysis: React.FC = () => {
     }
   };
 
-  const processFile = (file: File): void => {
-    setError('');
-    setIsProcessing(true);
-    setResult(null);
-
+  const processFile = async (file: File): Promise<void> => {
     // Validate file type and size
     const maxSize = 500 * 1024 * 1024; // 500MB
     if (file.size > maxSize) {
-      setError('File size exceeds 500MB limit');
-      setIsProcessing(false);
+      analysisMutation.reset();
       return;
     }
 
@@ -70,30 +145,16 @@ const VideoAnalysis: React.FC = () => {
 
     const validTypes = activeTab === 'video' ? validVideoTypes : validDocTypes;
     if (!validTypes.includes(file.type)) {
-      setError(`Invalid file type. Please upload a ${activeTab === 'video' ? 'video' : 'document'} file`);
-      setIsProcessing(false);
+      analysisMutation.reset();
       return;
     }
 
-    // Simulate processing with timeout
-    setTimeout(() => {
-      setIsProcessing(false);
-      setResult({
-        title: "The Future of Renewable Energy",
-        duration: "5:30",
-        summary: "This comprehensive video explores cutting-edge developments in renewable energy technology and their practical applications in urban environments. The presentation covers breakthrough innovations in solar efficiency, integrated wind power solutions, and successful community adoption strategies.",
-        keyPoints: [
-          "Latest advancements in solar panel efficiency",
-          "Urban wind power integration techniques",
-          "Community-based renewable energy initiatives",
-          "Cost-benefit analysis of implementation",
-          "Future technology roadmap"
-        ],
-        sentiment: "Positive",
-        topics: ["Clean Energy", "Urban Planning", "Innovation", "Sustainability"]
-      });
-    }, 2000);
+    analysisMutation.mutate(file);
   };
+
+  const isProcessing = analysisMutation.isPending || status === 'processing';
+  const isError = analysisMutation.isError || status === 'failed';
+  const errorMessage = error || (analysisMutation.error instanceof Error ? analysisMutation.error.message : 'An error occurred');
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -161,87 +222,42 @@ const VideoAnalysis: React.FC = () => {
         </div>
 
         {/* Error Message */}
-        {error && (
+        {isError && (
           <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-8 flex items-center">
             <AlertCircle className="h-5 w-5 text-red-500 mr-3" />
-            <p className="text-red-600">{error}</p>
+            <p className="text-red-500">{errorMessage}</p>
           </div>
         )}
 
-        {/* Processing State */}
+        {/* Results Section */}
         {isProcessing && (
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 mb-4">
-                <div className="w-full h-full border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin"></div>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Analyzing your content</h3>
-              <p className="text-gray-500">This might take a few moments...</p>
-            </div>
+          <div className="flex items-center justify-center mb-8">
+            <Clock className="animate-spin h-6 w-6 text-blue-500 mr-2" />
+            <span className="text-gray-600">Processing...</span>
           </div>
         )}
 
-        {/* Analysis Results */}
         {result && (
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
-              <h2 className="text-2xl font-bold text-white">Analysis Results</h2>
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{result.title}</h2>
+            <p className="text-gray-500 mb-2">Duration: {result.duration}</p>
+            <p className="text-gray-500 mb-2">Summary: {result.summary}</p>
+            <p className="text-gray-500 mb-2">Sentiment: {result.sentiment}</p>
+            <div className="mb-4">
+              <h3 className="font-semibold">Key Points:</h3>
+              <ul className="list-disc list-inside">
+                {result.key_points.map((point, index) => (
+                  <li key={index} className="text-gray-500">{point}</li>
+                ))}
+              </ul>
             </div>
-            
-            <div className="p-6 space-y-8">
-              {/* Title Section */}
-              <div className="bg-blue-50 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-blue-800 mb-2">{result.title}</h3>
-                <div className="flex items-center text-blue-600">
-                  <Clock className="h-4 w-4 mr-2" />
-                  <span>{result.duration}</span>
-                </div>
-              </div>
-
-              {/* Summary Section */}
-              <div>
-                <div className="flex items-center mb-4">
-                  <MessageSquare className="h-5 w-5 text-gray-400 mr-2" />
-                  <h3 className="text-lg font-semibold text-gray-800">Summary</h3>
-                </div>
-                <p className="text-gray-600 leading-relaxed">{result.summary}</p>
-              </div>
-
-              {/* Key Points Section */}
-              <div>
-                <div className="flex items-center mb-4">
-                  <Sparkles className="h-5 w-5 text-gray-400 mr-2" />
-                  <h3 className="text-lg font-semibold text-gray-800">Key Points</h3>
-                </div>
-                <div className="space-y-3">
-                  {result.keyPoints.map((point, index) => (
-                    <div key={index} className="flex items-start">
-                      <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        {index + 1}
-                      </div>
-                      <p className="ml-3 text-gray-600">{point}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Topics Section */}
-              <div>
-                <div className="flex items-center mb-4">
-                  <Tag className="h-5 w-5 text-gray-400 mr-2" />
-                  <h3 className="text-lg font-semibold text-gray-800">Main Topics</h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {result.topics.map((topic, index) => (
-                    <span 
-                      key={index}
-                      className="px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 rounded-full text-sm font-medium"
-                    >
-                      {topic}
-                    </span>
-                  ))}
-                </div>
-              </div>
+            <div>
+              <h3 className="font-semibold">Topics:</h3>
+              <ul className="list-disc list-inside">
+                {result.topics.map((topic, index) => (
+                  <li key={index} className="text-gray-500">{topic}</li>
+                ))}
+              </ul>
             </div>
           </div>
         )}

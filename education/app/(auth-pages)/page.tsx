@@ -2,6 +2,7 @@
 import SpotlightPreview from "@/components/Spotlight";
 import CardHoverEffectDemo from "@/components/Cardhover";
 import Navbar from "@/components/Navbar";
+import Info from "@/components/Infosection"
 import Footerpage from "@/components/Footer";
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
         <Navbar/>
         <SpotlightPreview />
         <CardHoverEffectDemo />
+        <Info/>
         <Footerpage/>
     </>
   )

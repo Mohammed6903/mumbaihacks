@@ -16,7 +16,7 @@ type TabType = 'video' | 'transcript';
 
 const ENDPOINTS = {
   video: {
-    upload: 'http://localhost:8000/video/upload',
+    upload: 'http://localhost:8000/upload',
     status: (taskId: string) => `http://localhost:8000/status/${taskId}`,
     result: (taskId: string) => `http://localhost:8000/result/${taskId}`,
   },
@@ -50,12 +50,13 @@ const useStatusPolling = (taskId: string | null, activeTab: TabType) => {
           setStatus('completed');
           const resultResponse = await fetch(ENDPOINTS[activeTab].result(taskId));
           const resultData = await resultResponse.json();
-          setResult(resultData); // resultData should now directly match AnalysisResult
+          // Adjust for `result.analysis` in video vs `result` in transcript
+          const analysisData = activeTab === 'video' ? resultData.analysis : resultData;
+          setResult(analysisData as AnalysisResult);
           return;
         }
 
-        // Continue polling if still processing
-        setTimeout(pollStatus, 2000);
+        setTimeout(pollStatus, 5000);
       } catch (err) {
         setStatus('failed');
         setError('Failed to fetch status');
@@ -69,7 +70,7 @@ const useStatusPolling = (taskId: string | null, activeTab: TabType) => {
       setResult(null);
       setError(null);
     };
-  }, [taskId]);
+  }, [taskId, activeTab]);
 
   return { status, result, error };
 };
@@ -127,14 +128,12 @@ const VideoAnalysis: React.FC = () => {
   };
 
   const processFile = async (file: File): Promise<void> => {
-    // Validate file type and size
-    const maxSize = 500 * 1024 * 1024; // 500MB
+    const maxSize = 500 * 1024 * 1024;
     if (file.size > maxSize) {
       analysisMutation.reset();
       return;
     }
 
-    // Validate file type
     const validVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
     const validDocTypes = [
       'application/pdf',
@@ -164,56 +163,35 @@ const VideoAnalysis: React.FC = () => {
           <p className="text-gray-600">Upload your video or transcript for in-depth analysis</p>
         </div>
         
-        {/* Enhanced Tabs */}
+        {/* Tabs */}
         <div className="bg-white rounded-xl shadow-lg p-1 mb-8">
           <div className="grid grid-cols-2 gap-1">
             {(['video', 'transcript'] as const).map((tab) => (
               <button
                 key={tab}
                 className={`flex items-center justify-center px-6 py-4 rounded-lg transition-all ${
-                  activeTab === tab
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'hover:bg-gray-50 text-gray-600'
+                  activeTab === tab ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 text-gray-600'
                 }`}
                 onClick={() => setActiveTab(tab)}
               >
-                {tab === 'video' ? (
-                  <Video className={`mr-2 h-5 w-5 ${activeTab === tab ? 'text-blue-600' : 'text-gray-400'}`} />
-                ) : (
-                  <FileText className={`mr-2 h-5 w-5 ${activeTab === tab ? 'text-blue-600' : 'text-gray-400'}`} />
-                )}
+                {tab === 'video' ? <Video className="mr-2 h-5 w-5 text-blue-600" /> : <FileText className="mr-2 h-5 w-5 text-blue-600" />}
                 <span className="font-medium">{tab === 'video' ? 'Video Analysis' : 'Transcript Analysis'}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Upload Area */}
-        <div 
-          className={`bg-white rounded-xl shadow-lg p-8 mb-8 transition-all ${
-            isDragging ? 'border-2 border-blue-400 bg-blue-50' : ''
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <input
-            type="file"
-            accept={activeTab === 'video' ? "video/*" : ".txt,.doc,.docx,.pdf"}
-            onChange={handleFileUpload}
-            className="hidden"
-            id="file-upload"
-          />
-          <label
-            htmlFor="file-upload"
-            className="flex flex-col items-center cursor-pointer"
-          >
+        {/* File Upload Section */}
+        <div className={`bg-white rounded-xl shadow-lg p-8 mb-8 ${isDragging ? 'border-2 border-blue-400 bg-blue-50' : ''}`}
+             onDragOver={handleDragOver}
+             onDragLeave={handleDragLeave}
+             onDrop={handleDrop}>
+          <input type="file" accept={activeTab === 'video' ? "video/*" : ".txt,.doc,.docx,.pdf"} onChange={handleFileUpload} className="hidden" id="file-upload" />
+          <label htmlFor="file-upload" className="flex flex-col items-center cursor-pointer">
             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
               <Upload className="h-8 w-8 text-blue-500" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Drop your {activeTab === 'video' ? 'video' : 'transcript'} here
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Drop your {activeTab === 'video' ? 'video' : 'transcript'} here</h3>
             <p className="text-gray-500 mb-4">or click to browse</p>
             <div className="px-4 py-2 bg-gray-50 rounded-full text-sm text-gray-500">
               {activeTab === 'video' ? 'MP4, WebM, MOV up to 500MB' : 'PDF, DOC, DOCX, TXT'}
@@ -221,44 +199,23 @@ const VideoAnalysis: React.FC = () => {
           </label>
         </div>
 
-        {/* Error Message */}
-        {isError && (
-          <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-8 flex items-center">
-            <AlertCircle className="h-5 w-5 text-red-500 mr-3" />
-            <p className="text-red-500">{errorMessage}</p>
-          </div>
-        )}
-
-        {/* Results Section */}
-        {isProcessing && (
-          <div className="flex items-center justify-center mb-8">
-            <Clock className="animate-spin h-6 w-6 text-blue-500 mr-2" />
-            <span className="text-gray-600">Processing...</span>
-          </div>
-        )}
+        {/* Display Results */}
+        {isProcessing && <p className="text-center text-blue-500">Processing...</p>}
+        {isError && <p className="text-center text-red-500">{errorMessage}</p>}
 
         {result && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{result.title}</h2>
-            <p className="text-gray-500 mb-2">Duration: {result.duration}</p>
-            <p className="text-gray-500 mb-2">Summary: {result.summary}</p>
-            <p className="text-gray-500 mb-2">Sentiment: {result.sentiment}</p>
-            <div className="mb-4">
-              <h3 className="font-semibold">Key Points:</h3>
-              <ul className="list-disc list-inside">
-                {result.key_points.map((point, index) => (
-                  <li key={index} className="text-gray-500">{point}</li>
-                ))}
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Analysis Results</h2>
+            <p className="mb-2"><strong>Title:</strong> {result.title}</p>
+            <p className="mb-2"><strong>Duration:</strong> {result.duration}</p>
+            <p className="mb-2"><strong>Summary:</strong> {result.summary}</p>
+            <p className="mb-2"><strong>Sentiment:</strong> {result.sentiment}</p>
+            <div className="mb-2"><strong>Key Points:</strong>
+              <ul className="list-disc pl-6">
+                {result.key_points.map((point, index) => <li key={index}>{point}</li>)}
               </ul>
             </div>
-            <div>
-              <h3 className="font-semibold">Topics:</h3>
-              <ul className="list-disc list-inside">
-                {result.topics.map((topic, index) => (
-                  <li key={index} className="text-gray-500">{topic}</li>
-                ))}
-              </ul>
-            </div>
+            <div><strong>Topics:</strong> {result.topics.join(', ')}</div>
           </div>
         )}
       </div>

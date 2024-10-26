@@ -34,7 +34,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto py-6 space-y-6">
+      <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h1 className="text-2xl font-bold text-gray-800">Exam Preparation Assistant</h1>
@@ -46,12 +46,12 @@ const App = () => {
         {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left column - Exam Form */}
-          <div className="space-y-6">
+          <div className="w-full bg-white rounded-xl shadow-sm">
             <IntegratedExamForm onMaterialsUpdate={handleMaterialsUpdate} files={files}/>
           </div>
 
           {/* Right column - File Management */}
-          <div className="bg-white rounded-xl shadow-sm">
+          <div className="w-full bg-white rounded-xl shadow-sm overflow-hidden">
             <FilePage
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}

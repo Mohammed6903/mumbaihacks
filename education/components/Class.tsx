@@ -135,9 +135,9 @@ const FilePage: React.FC<FilePageProps> = ({
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Left Section */}
-      <div className="w-1/2 p-6 flex flex-col">
+      <div className=" p-3 flex flex-col">
         {/* Header Strip */}
-        <div className="flex justify-between items-center bg-white shadow-sm rounded-xl p-4 mb-6">
+        <div className="flex justify-between items-center bg-white shadow-sm rounded-xl p-6 mb-6">
           <div className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-blue-600" />
             <span className="font-medium text-gray-800">File Manager</span>
@@ -146,7 +146,7 @@ const FilePage: React.FC<FilePageProps> = ({
             onClick={() => setIsModalOpen(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2"
           >
-            <Upload className="w-4 h-4" />
+            <Upload className="w-4 h-2" />
             <span>Upload File</span>
           </button>
         </div>

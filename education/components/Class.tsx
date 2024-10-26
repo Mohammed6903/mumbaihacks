@@ -4,20 +4,47 @@ import React, { useState } from 'react';
 import { Upload, X, FileText, Clock, HardDrive } from 'lucide-react';
 
 interface FileData {
-  name: string;
+  filename: string;
   size: string;
   type: string;
   description: string;
-  timestamp: string;
+  date_added: string;
+  topics: string[];
 }
 
-const FilePage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [description, setDescription] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [files, setFiles] = useState<FileData[]>([]);
-  const [aiResponse, setAiResponse] = useState('AI generated response will appear here...');
-  const [isDragging, setIsDragging] = useState(false);
+interface FilePageProps {
+  isModalOpen: boolean;
+  setIsModalOpen: (open: boolean) => void;
+  description: string;
+  setDescription: (desc: string) => void;
+  selectedFile: File | null;
+  topics: string;
+  setTopics: (topics: string) => void
+  setSelectedFile: (file: File | null) => void;
+  files: FileData[];
+  setFiles: (files: FileData[]) => void;
+  aiResponse: string;
+  setAiResponse: (response: string) => void;
+  isDragging: boolean;
+  setIsDragging: (dragging: boolean) => void;
+}
+
+const FilePage: React.FC<FilePageProps> = ({
+  isModalOpen,
+  setIsModalOpen,
+  description,
+  setDescription,
+  selectedFile,
+  setSelectedFile,
+  files,
+  setFiles,
+  aiResponse,
+  setAiResponse,
+  isDragging,
+  setIsDragging,
+  topics,
+  setTopics,
+}) => {
 
   const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return bytes + ' B';
@@ -87,17 +114,20 @@ const FilePage = () => {
     e.preventDefault();
     if (selectedFile) {
       const newFile: FileData = {
-        name: selectedFile.name,
+        filename: selectedFile.name,
         size: formatFileSize(selectedFile.size),
         type: getFileType(selectedFile.name),
         description: description,
-        timestamp: new Date().toLocaleTimeString()
+        date_added: new Date().toISOString(),
+        topics: topics.split(',').map(topic => topic.trim()),
       };
       
       setFiles([...files, newFile]);
+      // updateModule([...module, file: newFile]);
       setAiResponse(`Processing ${selectedFile.name}...\nAnalyzing content...\nGenerating response based on the uploaded file and description.`);
       setIsModalOpen(false);
       setDescription('');
+      setTopics('');
       setSelectedFile(null);
     }
   };
@@ -105,9 +135,9 @@ const FilePage = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Left Section */}
-      <div className="w-1/2 p-6 flex flex-col">
+      <div className=" p-3 flex flex-col">
         {/* Header Strip */}
-        <div className="flex justify-between items-center bg-white shadow-sm rounded-xl p-4 mb-6">
+        <div className="flex justify-between items-center bg-white shadow-sm rounded-xl p-6 mb-6">
           <div className="flex items-center space-x-2">
             <FileText className="w-5 h-5 text-blue-600" />
             <span className="font-medium text-gray-800">File Manager</span>
@@ -116,7 +146,7 @@ const FilePage = () => {
             onClick={() => setIsModalOpen(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2"
           >
-            <Upload className="w-4 h-4" />
+            <Upload className="w-4 h-2" />
             <span>Upload File</span>
           </button>
         </div>
@@ -141,7 +171,7 @@ const FilePage = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <FileText className="w-4 h-4 text-gray-400 mr-2" />
-                          <span className="text-sm font-medium text-gray-900">{file.name}</span>
+                          <span className="text-sm font-medium text-gray-900">{file.filename}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -161,7 +191,7 @@ const FilePage = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-600">
                           <Clock className="w-4 h-4 mr-2 text-gray-400" />
-                          {file.timestamp}
+                          {file.date_added}
                         </div>
                       </td>
                     </tr>
@@ -174,7 +204,7 @@ const FilePage = () => {
       </div>
 
       {/* Right Section */}
-      <div className="w-1/2 p-6">
+      {/* <div className="w-1/2 p-6">
         <div className="bg-white rounded-xl shadow-sm h-full p-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
             <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
@@ -184,7 +214,7 @@ const FilePage = () => {
             {aiResponse}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Upload Modal */}
       {isModalOpen && (
@@ -249,6 +279,18 @@ const FilePage = () => {
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y text-sm"
                   placeholder="Enter file description..."
+                />
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={topics}
+                  onChange={(e) => setTopics(e.target.value)}
+                  className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y text-sm"
+                  placeholder="Enter topics covered in this reference file..."
                 />
               </div>
 

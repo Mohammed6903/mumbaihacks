@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect, DragEvent, ChangeEvent } from 'react';
-import { Upload, FileText, Video, AlertCircle, Clock, MessageSquare, Sparkles, Tag } from 'lucide-react';
+import { Upload, FileText, Video } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
+import LoadingModal from '@/components/loadingModel';
 
 interface AnalysisResult {
   title: string;
@@ -50,7 +51,6 @@ const useStatusPolling = (taskId: string | null, activeTab: TabType) => {
           setStatus('completed');
           const resultResponse = await fetch(ENDPOINTS[activeTab].result(taskId));
           const resultData = await resultResponse.json();
-          // Adjust for `result.analysis` in video vs `result` in transcript
           const analysisData = activeTab === 'video' ? resultData.analysis : resultData;
           setResult(analysisData as AnalysisResult);
           return;
@@ -151,12 +151,32 @@ const VideoAnalysis: React.FC = () => {
     analysisMutation.mutate(file);
   };
 
-  const isProcessing = analysisMutation.isPending || status === 'processing';
+  const isProcessing = (() => {
+    // Keep modal open during initial upload
+    if (analysisMutation.isPending) return true;
+    
+    // Keep modal open during processing
+    if (status === 'processing') return true;
+    
+    // Close modal only when explicitly completed or failed
+    if (status === 'completed' || status === 'failed') return false;
+    
+    // Keep modal open while waiting for status updates
+    if (taskId && !status) return true;
+    
+    // Default to closed
+    return false;
+  })();
+  
   const isError = analysisMutation.isError || status === 'failed';
   const errorMessage = error || (analysisMutation.error instanceof Error ? analysisMutation.error.message : 'An error occurred');
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <LoadingModal 
+        isOpen={isProcessing} 
+        status={status}
+      />
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Content Analysis Studio</h1>
@@ -205,17 +225,24 @@ const VideoAnalysis: React.FC = () => {
 
         {result && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Analysis Results</h2>
-            <p className="mb-2"><strong>Title:</strong> {result.title}</p>
-            <p className="mb-2"><strong>Duration:</strong> {result.duration}</p>
-            <p className="mb-2"><strong>Summary:</strong> {result.summary}</p>
-            <p className="mb-2"><strong>Sentiment:</strong> {result.sentiment}</p>
-            <div className="mb-2"><strong>Key Points:</strong>
-              <ul className="list-disc pl-6">
-                {result.key_points.map((point, index) => <li key={index}>{point}</li>)}
-              </ul>
-            </div>
-            <div><strong>Topics:</strong> {result.topics.join(', ')}</div>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{result.title}</h2>
+            <p className="text-gray-600 mb-4">Duration: {result.duration}</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Summary</h3>
+            <p className="text-gray-600 mb-4">{result.summary}</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Key Points</h3>
+            <ul className="list-disc list-inside text-gray-600">
+              {result.key_points.map((point, index) => (
+                <li key={index}>{point}</li>
+              ))}
+            </ul>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Sentiment</h3>
+            <p className="text-gray-600">{result.sentiment}</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Topics</h3>
+            <ul className="list-disc list-inside text-gray-600">
+              {result.topics.map((topic, index) => (
+                <li key={index}>{topic}</li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

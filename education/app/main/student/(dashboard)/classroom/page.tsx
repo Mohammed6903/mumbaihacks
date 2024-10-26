@@ -1,14 +1,83 @@
-import React from 'react';
+'use client'
+import React, { useState } from 'react';
+import IntegratedExamForm from '@/components/ClassroomForm';
 import FilePage from '@/components/Class';
-import CourseExamForm from '@/components/ClassroomForm'
+import StudyPlanDisplay from '@/components/StudyPlanDisplay';
 
-const App: React.FC = () => {
-    return (
-        <div>
-            <CourseExamForm/>
-            <FilePage />
+interface FileData {
+    filename: string;
+    size: string;
+    type: string;
+    description: string;
+    date_added: string;
+    topics: string[];
+}
+
+const App = () => {
+  // File management state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [description, setDescription] = useState('');
+  const [topics, setTopics] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<FileData[]>([]);
+  const [aiResponse, setAiResponse] = useState('Upload a file to see AI analysis');
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Materials state for exam form
+  const [materials, setMaterials] = useState(null);
+
+  // Handler for updating materials from exam form
+  const handleMaterialsUpdate = (newMaterials: any) => {
+    setMaterials(newMaterials);
+    setAiResponse(JSON.stringify(newMaterials, null, 2));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto py-6 space-y-6">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h1 className="text-2xl font-bold text-gray-800">Exam Preparation Assistant</h1>
+          <p className="text-gray-600 mt-2">
+            Enter your exam details and upload study materials for AI-powered analysis
+          </p>
         </div>
-    );
+
+        {/* Main content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left column - Exam Form */}
+          <div className="space-y-6">
+            <IntegratedExamForm onMaterialsUpdate={handleMaterialsUpdate} files={files}/>
+          </div>
+
+          {/* Right column - File Management */}
+          <div className="bg-white rounded-xl shadow-sm">
+            <FilePage
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+              description={description}
+              setDescription={setDescription}
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+              files={files}
+              setFiles={setFiles}
+              aiResponse={aiResponse}
+              setAiResponse={setAiResponse}
+              isDragging={isDragging}
+              setIsDragging={setIsDragging}
+              topics={topics}
+              setTopics={setTopics}
+            />
+          </div>
+        </div>
+
+        {/* Results section */}
+        {materials && (
+          <StudyPlanDisplay materials={JSON.parse(JSON.stringify(materials, null, 2))} />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default App;

@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from lectures import MediaProcessor
 from examPrepAssistant import ExamPrepAssistant
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
 
 app = FastAPI(title="Media Processing API")
 
@@ -372,12 +373,13 @@ async def get_prep_assistance(
                     "description": m.description,
                     "date_added": m.date_added,
                     "topics": m.topics,
-                    "difficulty": m.difficulty
+                    # "difficulty": m.difficulty
                 } for m in request.course_materials],
                 syllabus={
                     "course_name": request.syllabus.course_name,
                     "exam_type": request.syllabus.exam_type,
                     "exam_date": request.syllabus.exam_date,
+                    "current_date": str(datetime.now().date()),
                     "duration": request.syllabus.duration,
                     "format": request.syllabus.format,
                     "modules": {
@@ -433,6 +435,11 @@ async def get_assistance_result(task_id: str):
         )
     
     return JSONResponse(content=task_info["result"])
+
+# @app.get("/routine/{task_id}", response_model=ProcessingResponse)
+# async def get_routine(task_id: str):
+#     if task_id not in active_tasks:
+#         raise Excep
 
 # Optional: Endpoint to clean up completed tasks
 @app.delete("/cleanup-task/{task_id}")

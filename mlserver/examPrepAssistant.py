@@ -21,6 +21,7 @@ class ExamPrepAssistant:
             f"Course: {syllabus.get('course_name', 'Computer Networks')}\n"
             f"Exam Type: {syllabus.get('exam_type', 'Final Exam')}\n"
             f"Date: {syllabus.get('exam_date', 'Upcoming')}\n"
+            f"Current Date: {syllabus.get('current_date', str(datetime.now().date()))}\n"
             f"Duration: {syllabus.get('duration', '3 hours')}\n"
             f"Format: {syllabus.get('format', 'Written + Practical')}\n"
         )
@@ -117,7 +118,7 @@ class ExamPrepAssistant:
                 f"  Description: {material['description']}\n"
                 f"  Date Added: {material['date_added']}\n"
                 f"  Topics Covered: {topics}\n"
-                f"  Difficulty Level: {material.get('difficulty', 'Intermediate')}\n"
+                # f"  Difficulty Level: {material.get('difficulty', 'Intermediate')}\n"
             )
         return "\n".join(formatted)
 

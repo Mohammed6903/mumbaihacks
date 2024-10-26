@@ -9,7 +9,7 @@ function Navbar() {
             className="sm:order-1 flex-none text-xl font-semibold ml-3 text-slate-400 focus:outline-none focus:opacity-80"
             href="#"
           >
-            EdTech
+            EduTech
           </a>
           <div className="sm:order-3 flex items-center gap-x-2">
             <button

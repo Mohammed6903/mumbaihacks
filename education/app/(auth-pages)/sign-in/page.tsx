@@ -48,7 +48,7 @@ export default function Login() {
         } catch (error) {
           console.error('Database error:', error);
         }
-        router.push('/main'); // in future add role manager
+        router.push('/main/student'); // in future add role manager
       }
     };
     
@@ -57,7 +57,7 @@ export default function Login() {
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        router.push('/main'); // in future add role manager
+        router.push('/main/student'); // in future add role manager
       }
     });
 

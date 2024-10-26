@@ -10,7 +10,7 @@ export default function SpotlightPreview() {
       />
       <div className="flex flex-col  items-center p-4 max-w-7xl  mx-auto relative z-10  w-full pt-20 md:pt-0">
         <h1 className=" text-7xl my-14 md:text-9xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
-          EdTech with <br /> AI
+          EduTech with <br /> AI
         </h1>
         <p className="mt-4 mb-7 text-2xl font-normal  text-neutral-300 max-w-5xl text-center mx-auto">
           We're creating a modern classroom app using Next.js and AI to

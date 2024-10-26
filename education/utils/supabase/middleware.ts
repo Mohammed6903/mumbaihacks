@@ -46,7 +46,7 @@ export const updateSession = async (request: NextRequest) => {
     }
 
     if (request.nextUrl.pathname === "/" && !user.error) {
-      return NextResponse.redirect(new URL("/main", request.url)); // in future add role manager
+      return NextResponse.redirect(new URL("/main/student", request.url)); // in future add role manager
     }
 
     return response;

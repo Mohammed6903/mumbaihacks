@@ -10,7 +10,7 @@ function Footerpage() {
             <a href="https://flowbite.com/" className="flex items-center">
               
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                EdTech
+                EduTech
               </span>
             </a>
           </div>
@@ -82,7 +82,7 @@ function Footerpage() {
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2024{" "}
             <a href="https://flowbite.com/" className="hover:underline">
-              EdTech™
+              EduTech™
             </a>
             . All Rights Reserved.
           </span>

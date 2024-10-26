@@ -22,7 +22,7 @@ function Footerpage() {
               <ul className="text-gray-500 dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <a href="https://flowbite.com/" className="hover:underline">
-                    Flowbite
+                    
                   </a>
                 </li>
                 <li>
@@ -30,7 +30,7 @@ function Footerpage() {
                     href="https://tailwindcss.com/"
                     className="hover:underline"
                   >
-                    Tailwind CSS
+                    
                   </a>
                 </li>
               </ul>
